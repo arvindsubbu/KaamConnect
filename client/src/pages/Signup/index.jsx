@@ -9,19 +9,36 @@ import {
   Col,
   Upload,
   Typography,
+  message,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { signUpUser } from "../../api/userApi";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 function Signup() {
+  //use redux to store the role
   const [role, setRole] = useState("consumer"); // consumer or provider
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Form Submitted:", { ...values, role });
+  const onFinish = async (values) => {
+      try{
+         const response = await signUpUser(values);
+      //  console.log(response);
+        if(response.success){
+          message.success(response.message);
+          
+        }else{
+          message.error(response.error);
+          console.log(response.error);
+        }
+      }catch(err){
+               console.log(err);
+      }
+     // console.log(values);
+      
   };
 
   return (
@@ -38,7 +55,7 @@ function Signup() {
         onFinish={onFinish}
         style={{ marginTop: 20 }}
       >
-        <Form.Item>
+        <Form.Item name='role'>
           <Radio.Group
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -66,13 +83,17 @@ function Signup() {
           name="phone"
           rules={[
             { required: true, message: "Please enter your phone number" },
+            {
+              pattern : /^\d{10}$/,
+              message : 'Phone number must be exactly 10 digits'
+            }
           ]}
         >
-          <Input placeholder="Phone Number" />
+          <Input placeholder="Phone Number" type="number" />
         </Form.Item>
 
-        <Form.Item name="email">
-          <Input placeholder="Email (optional)" />
+        <Form.Item name="email" rules={[{type : 'email',message : 'Enter a valid Email'}]}>
+          <Input placeholder="Email (optional)"/>
         </Form.Item>
 
         <Row gutter={16}>
@@ -93,7 +114,7 @@ function Signup() {
               dependencies={["password"]}
               hasFeedback
               rules={[
-                { required: true, message: "Please confirm your password" },
+                { required: true, message: "Please confirm your password"},
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (!value || getFieldValue("password") === value) {

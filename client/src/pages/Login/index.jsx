@@ -1,14 +1,29 @@
 import React from "react";
-import { Form, Input, Button, Typography } from "antd";
-import { Link } from "react-router-dom";
-
+import { Form, Input, Button, Typography,message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../../api/userApi";
 const { Title, Text } = Typography;
 
 function Login() {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Login Submitted:", values);
+  const onFinish = async (values) => {
+    try {
+      const response = await loginUser(values);
+      
+
+      if (response.success) {
+        message.success(response.message);
+        console.log(response.message);
+        localStorage.setItem("token", response.data);
+        navigate("/");
+       }else{
+       message.error(response.error);
+       }
+    } catch (err) {
+      console.log( err);
+    }
   };
 
   return (
@@ -18,7 +33,9 @@ function Login() {
     >
       {/* Logo & tagline */}
       <Title level={2}>KaamConnect</Title>
-      <Text type="secondary">Connecting people with trusted local services.</Text>
+      <Text type="secondary">
+        Connecting people with trusted local services.
+      </Text>
 
       {/* Login Form */}
       <Form
@@ -29,7 +46,9 @@ function Login() {
       >
         <Form.Item
           name="phone"
-          rules={[{ required: true, message: "Please enter your phone number" }]}
+          rules={[
+            { required: true, message: "Please enter your phone number" },
+          ]}
         >
           <Input placeholder="Phone Number" />
         </Form.Item>
@@ -48,7 +67,7 @@ function Login() {
         </Form.Item>
 
         <Text>
-          Don’t have an account? <Link to='/signup'>Sign Up</Link>
+          Don't have an account? <Link to="/signup">Sign Up</Link>
         </Text>
       </Form>
     </main>
