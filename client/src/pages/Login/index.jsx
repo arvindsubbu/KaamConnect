@@ -1,7 +1,8 @@
 import React from "react";
-import { Form, Input, Button, Typography,message } from "antd";
+import { Form, Input, Button, Typography } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/userApi";
+import {toast} from 'react-hot-toast'
 const { Title, Text } = Typography;
 
 function Login() {
@@ -11,15 +12,14 @@ function Login() {
   const onFinish = async (values) => {
     try {
       const response = await loginUser(values);
-      
-
       if (response.success) {
-        message.success(response.message);
+        toast.success(response.message);
         console.log(response.message);
         localStorage.setItem("token", response.data);
+        
         navigate("/");
        }else{
-       message.error(response.error);
+       toast.error(response.message);
        }
     } catch (err) {
       console.log( err);

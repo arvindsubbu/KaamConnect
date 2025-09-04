@@ -45,6 +45,7 @@ const loginUser = async (req,res)=>{
             success : true,
             message : 'User logged in successfully',
             data : token,
+            role : user.role
         })
     }catch(err){
         res.status(400).json({message : err.message});
@@ -53,7 +54,8 @@ const loginUser = async (req,res)=>{
 
 const getCurrentUser = async (req,res)=>{
     try{
-        const user = await User.findById(req.body.userId).select('-password');
+        const user = await User.findById(req.userId).select('-password');
+        console.log('from server',user);
         if(!user){
             return res.status(404).send({
                 success : false,

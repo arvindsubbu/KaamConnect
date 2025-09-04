@@ -9,11 +9,11 @@ import {
   Col,
   Upload,
   Typography,
-  message,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { signUpUser } from "../../api/userApi";
+import { toast } from "react-hot-toast";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -25,19 +25,20 @@ function Signup() {
 
   const onFinish = async (values) => {
       try{
-         const response = await signUpUser(values);
+        const payload = {...values,role};
+         const response = await signUpUser(payload);
       //  console.log(response);
         if(response.success){
-          message.success(response.message);
-          
+          toast.success(response.message);
+          form.resetFields();
         }else{
-          message.error(response.error);
-          console.log(response.error);
+          toast.error(response.message);
+          console.log(response.message);
         }
       }catch(err){
                console.log(err);
-      }
-     // console.log(values);
+      }  
+      
       
   };
 
