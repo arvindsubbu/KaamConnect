@@ -4,8 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/userApi";
 import {toast} from 'react-hot-toast'
 const { Title, Text } = Typography;
+import { useDispatch } from "react-redux";
+import { setRole } from "../../redux/roleSlice";
 
 function Login() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
@@ -14,10 +17,14 @@ function Login() {
       const response = await loginUser(values);
       if (response.success) {
         toast.success(response.message);
-        console.log(response.message);
+        console.log(response);
         localStorage.setItem("token", response.data);
-        
-        navigate("/");
+        const role = response.role;
+        dispatch(setRole(role));
+        if (role === "consumer") navigate("/consumer");
+        else if (role === "provider") navigate("/provider");
+        else if (role === "admin") navigate("/admin");
+        else navigate("/");
        }else{
        toast.error(response.message);
        }

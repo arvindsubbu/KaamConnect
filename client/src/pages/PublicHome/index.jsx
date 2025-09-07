@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { Layout, Menu, Button, Input, Row, Col, Card, Typography } from "antd";
 import {
   SearchOutlined,
@@ -17,6 +17,8 @@ import {
   StarFilled,
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
+import Consumer from "../Consumer";
+import { useSelector } from "react-redux";
 
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -45,10 +47,17 @@ const featuredWorkers = [
   { name: "Sandeep Verma", service: "Electrician", rating: 4.7, jobs: 80, price: "₹250" },
 ];
 
-const Home = () => {
+function PublicHome(){
+  const role = useSelector((state)=> state.role.role);
+  //console.log(role);
+  
   const isLoggedIn = !!localStorage.getItem("token");
   const navigate = useNavigate();
-
+ useEffect(()=>{
+   if(isLoggedIn){
+    
+   } 
+ })
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/"); // redirect to landing page
@@ -178,10 +187,7 @@ const Home = () => {
             </Row>
           </>
         ) : (
-          <>
-            <Title level={2}>Welcome back to KaamConnect!</Title>
-            <p>This is your dashboard. Show personalized info here.</p>
-          </>
+            <Consumer/>
         )}
       </Content>
 
@@ -204,4 +210,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default PublicHome;

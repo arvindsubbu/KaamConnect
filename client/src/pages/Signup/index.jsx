@@ -198,7 +198,7 @@ function Signup() {
         </Form.Item>
 
         <Text>
-          Already have an account? <Link to='/'>Log In</Link>
+          Already have an account? <Link to='/login'>Log In</Link>
         </Text>
       </Form>
     </main>

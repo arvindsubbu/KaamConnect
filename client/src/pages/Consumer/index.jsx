@@ -8,20 +8,8 @@ import {
   Typography,
   Input,
   Avatar,
-  Carousel,
 } from "antd";
-import {
-  SearchOutlined,
-  StarFilled,
-  ToolOutlined,
-  ThunderboltOutlined,
-  HomeOutlined,
-  GiftOutlined,
-  SmileOutlined,
-} from "@ant-design/icons";
-import Slider from 'react-slick'
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { SearchOutlined, StarFilled,EnvironmentOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -49,7 +37,6 @@ const categories = [
   { icon: "💇", label: "Salon at Home" },
 ];
 
-
 const workers = [
   {
     name: "Rajesh Kumar",
@@ -70,31 +57,32 @@ const workers = [
 ];
 
 function Consumer() {
-
-   const settings = {
-    dots: false,
-    infinite: false,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    swipeToSlide: true,
-    arrows: true,
-  };
-
   return (
     <Layout className="min-h-screen bg-gray-50">
       <Content className="p-6 md:p-12">
         {/* Greeting */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <Title level={3}>
-            Welcome back,<span>Arvind 👋</span>
-          </Title>
+         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+      <Title level={3}>
+        Welcome back, <span>Arvind 👋</span>
+      </Title>
+
+      <Row gutter={[16, 16]} className="mt-3">
+        <Col xs={24} sm={10}>
           <Input
             size="large"
-            placeholder="Let's detect your location"
+            placeholder="What work needs to be done!!"
             prefix={<SearchOutlined />}
-            className="max-w-md mt-3"
-          ></Input>
-        </div>
+          />
+        </Col>
+        <Col xs={24} sm={8}>
+          <Input
+            size="large"
+            placeholder="Location"
+            prefix={<EnvironmentOutlined />}
+          />
+        </Col>
+      </Row>
+    </div>
         {/* Quick Actions */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <Title level={4}>Quick Actions</Title>
@@ -148,47 +136,22 @@ function Consumer() {
         </div>
 
         {/* Categories */}
-        {/* <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <div className="flex justify-between items-center">
-            <Title level={4}>Categories</Title>
-            <Button type="link">View All Categories</Button>
-          </div> */}
-          {/* <Row gutter={[16, 16]} className="mt-4">
-            {categories.map((c, idx) => (
-              <Col xs={8} sm={6} md={4} key={idx}>
-                <Card hoverable className="text-center rounded-xl shadow-sm">
-                  <div className="text-2xl mb-2">{c.icon}</div>
-                  <Text>{c.label}</Text>
-                </Card>
-              </Col>
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Categories</h2>
+          {/* Scrollable container */}
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {categories.map((cat, idx) => (
+              <Card
+                key={idx}
+                hoverable
+                className="min-w-[120px] text-center rounded-lg shadow-sm"
+              >
+                <div className="text-3xl mb-2">{cat.icon}</div>
+                <Text strong>{cat.label}</Text>
+              </Card>
             ))}
-          </Row> */}
-          {/* <div className="overflow-x-auto whitespace-nowrap mt-4">
-            <div className="flex gap-4">
-              {categories.map((c, idx) => (
-                <Card
-                  key={idx}
-                  hoverable
-                  className="inline-block min-w-[120px] text-center rounded-xl shadow-sm"
-                >
-                  <div className="text-2xl mb-2">{c.icon}</div>
-                  <Text className="text-wrap">{c.label}</Text>
-                </Card>
-              ))}
-            </div> */}
-          {/* </div>
-        </div> */}
-         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <h2 className="text-xl font-semibold mb-4">Categories</h2>
-      <Slider {...settings}>
-        {categories.map((cat, idx) => (
-          <Card key={idx} hoverable className="text-center mx-2">
-            <div className="text-3xl mb-2">{cat.icon}</div>
-            <Text strong>{cat.label}</Text>
-          </Card>
-        ))}
-      </Slider>
-    </div>
+          </div>
+        </div>
 
         {/* My Bookings */}
         <div className="bg-white rounded-2xl shadow-sm p-6">
