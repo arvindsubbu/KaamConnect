@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema(
       enum: ["consumer", "provider"],
       required: true,
     },
+    location : {
+      type : String,
+      required : true,
+    }
   },
   { timestamps: true }
 );

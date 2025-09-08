@@ -1,32 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../api/userApi";
 import { Spin, Layout, Menu } from "antd";
-import {
-  HomeOutlined,
-  LogoutOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { setRole,clearRole } from "../redux/roleSlice";
+import { HomeOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import { setRole, clearRole } from "../redux/roleSlice";
 import { useDispatch, useSelector } from "react-redux";
+import PublicHome from "../pages/PublicHome";
 
 const { Header, Content } = Layout;
 
-function ProtectedRoute({children,role : requiredRole}) {
+function ProtectedRoute({ children, role: requiredRole }) {
   const role = useSelector((state) => state.role.value);
-  console.log(role);
-  
+  //  console.log(role);
+
   const [loading, setLoading] = useState(true);
-  //const [role, setRole] = useState(null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const location = useLocation();
 
   useEffect(() => {
-     console.log("ProtectedRoute useEffect triggered");
+    console.log("ProtectedRoute useEffect triggered");
     const checkAuth = async () => {
       if (!localStorage.getItem("token")) {
-        navigate("/login");
+        setLoading(false);
         return;
       }
       try {
@@ -34,9 +31,18 @@ function ProtectedRoute({children,role : requiredRole}) {
         const response = await getCurrentUser();
 
         if (response.success) {
-          console.log("API returned role:", response.data.role);
+          // console.log("API returned role:", response.data.role);
           dispatch(setRole(response.data.role));
+          console.log(response.data)
           setUser(response.data);
+          if (location.pathname === "/") {
+            if (response.data.role === "consumer")
+              navigate("/consumer", { replace: true });
+            else if (response.data.role === "provider")
+              navigate("/provider", { replace: true });
+            else if (response.data.role === "admin")
+              navigate("/admin", { replace: true });
+          }
         } else {
           localStorage.removeItem("token");
           dispatch(clearRole());
@@ -44,7 +50,7 @@ function ProtectedRoute({children,role : requiredRole}) {
         }
       } catch (err) {
         localStorage.removeItem("token");
-         dispatch(clearRole());
+        dispatch(clearRole());
         setUser(null);
         navigate("/login");
       } finally {
@@ -52,18 +58,20 @@ function ProtectedRoute({children,role : requiredRole}) {
       }
     };
     checkAuth();
-  }, [navigate,dispatch]);
+  }, [navigate, dispatch, location.pathname]);
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 100 }}>
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: 100 }}
+      >
         <Spin size="large" />
       </div>
     );
   }
 
-   if (requiredRole && role !== requiredRole) {
-    return <div>Unauthorized</div>;
+  if (requiredRole && role !== requiredRole) {
+    return navigate("/login");
   }
   // Setup nav menu
   const navItems = [
@@ -72,6 +80,7 @@ function ProtectedRoute({children,role : requiredRole}) {
       key: "home",
       icon: <HomeOutlined />,
       onClick: () => {
+        console.log('home button clicked');        
         if (role === "consumer") navigate("/consumer");
         else if (role === "provider") navigate("/provider");
         else if (role === "admin") navigate("/admin");
@@ -114,6 +123,10 @@ function ProtectedRoute({children,role : requiredRole}) {
     },
   ];
 
+  if (!localStorage.getItem("token") && location.pathname === "/") {
+    return <PublicHome />;
+  }
+
   // Pick correct dashboard page
   // let Dashboard = null;
   // if (role === "consumer") Dashboard = <ConsumerHome />;
@@ -136,7 +149,12 @@ function ProtectedRoute({children,role : requiredRole}) {
         <h3
           className="text-white m-0"
           style={{ color: "white", cursor: "pointer" }}
-          onClick={() => navigate("/")}
+          onClick={() => {
+            if (role === "consumer") navigate("/consumer");
+            else if (role === "provider") navigate("/provider");
+            else if (role === "admin") navigate("/admin");
+            else navigate("/");
+          }}
         >
           KaamConnect
         </h3>

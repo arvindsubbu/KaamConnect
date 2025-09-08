@@ -24,6 +24,8 @@ function Signup() {
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
+  console.log(values);
+  
       try{
         const payload = {...values,role};
          const response = await signUpUser(payload);
@@ -74,7 +76,7 @@ function Signup() {
 
         {/* Common Fields */}
         <Form.Item
-          name="fullname"
+          name="name"
           rules={[{ required: true, message: "Please enter your full name" }]}
         >
           <Input placeholder="Full Name" />
