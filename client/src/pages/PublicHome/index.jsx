@@ -23,15 +23,37 @@ import { useSelector } from "react-redux";
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
 
+// const categories = [
+//   { icon: <ToolOutlined />, label: "Plumber" },
+//   { icon: <ThunderboltOutlined />, label: "Electrician" },
+//   { icon: <HomeOutlined />, label: "Maid" },
+//   { icon: <GiftOutlined />, label: "Decorator" },
+//   { icon: <SmileOutlined />, label: "Flowers" },
+//   { icon: <ToolOutlined />, label: "Carpenter" },
+//   { icon: <CarOutlined />, label: "Movers" },
+//   { icon: <PlusOutlined />, label: "More" },
+// ];
 const categories = [
-  { icon: <ToolOutlined />, label: "Plumber" },
-  { icon: <ThunderboltOutlined />, label: "Electrician" },
-  { icon: <HomeOutlined />, label: "Maid" },
-  { icon: <GiftOutlined />, label: "Decorator" },
-  { icon: <SmileOutlined />, label: "Flowers" },
-  { icon: <ToolOutlined />, label: "Carpenter" },
-  { icon: <CarOutlined />, label: "Movers" },
-  { icon: <PlusOutlined />, label: "More" },
+  { icon: "🔧", label: "Plumber" },
+  { icon: "⚡", label: "Electrician" },
+  { icon: "🏠", label: "Maid" },
+  { icon: "🎁", label: "Decorator" },
+  { icon: "🌸", label: "Flowers" },
+  { icon: "🪚", label: "Carpenter" },
+  { icon: "🚚", label: "Movers" },
+  { icon: "🖥️", label: "Computer Repair" },
+  { icon: "📱", label: "Mobile Repair" },
+  { icon: "🧹", label: "Cleaning" },
+  { icon: "🍴", label: "Cook" },
+  { icon: "🚗", label: "Driver" },
+  { icon: "🎶", label: "DJ / Music" },
+  { icon: "📦", label: "Packers & Movers" },
+  { icon: "🛠️", label: "Mechanic" },
+  { icon: "👶", label: "Babysitter" },
+  { icon: "👵", label: "Elder Care" },
+  { icon: "🐶", label: "Pet Care" },
+  { icon: "🛋️", label: "Furniture Assembly" },
+  { icon: "💇", label: "Salon at Home" },
 ];
 
 const whyChoose = [
@@ -132,18 +154,22 @@ function PublicHome(){
             </Row>
 
             {/* Categories */}
-            <Row gutter={[16, 16]} justify="center" style={{ marginBottom: 50 }}>
-              {categories.map((cat, idx) => (
-                <Col xs={12} sm={8} md={6} lg={6} key={idx}>
-                  <Card hoverable style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "28px", marginBottom: "10px" }}>
-                      {cat.icon}
+            <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+                      <h2 className="text-xl font-semibold mb-4">Categories</h2>
+                      {/* Scrollable container */}
+                      <div className="flex gap-4 overflow-x-auto pb-2">
+                        {categories.map((cat, idx) => (
+                          <Card
+                            key={idx}
+                            hoverable
+                            className="min-w-[120px] text-center rounded-lg shadow-sm"
+                          >
+                            <div className="text-3xl mb-2">{cat.icon}</div>
+                            <Text strong>{cat.label}</Text>
+                          </Card>
+                        ))}
+                      </div>
                     </div>
-                    <Text strong>{cat.label}</Text>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
 
             {/* Why Choose Us */}
             <Row justify="center" gutter={16} style={{ marginBottom: 50 }}>

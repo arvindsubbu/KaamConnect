@@ -12,7 +12,6 @@ const { Header, Content } = Layout;
 function ProtectedRoute({ children, role: requiredRole }) {
   const role = useSelector((state) => state.role.value);
   //  console.log(role);
-
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
         if (response.success) {
           // console.log("API returned role:", response.data.role);
           dispatch(setRole(response.data.role));
-          console.log(response.data)
+          console.log(response.data);
           setUser(response.data);
           if (location.pathname === "/") {
             if (response.data.role === "consumer")
@@ -80,7 +79,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
       key: "home",
       icon: <HomeOutlined />,
       onClick: () => {
-        console.log('home button clicked');        
+        console.log("home button clicked");
         if (role === "consumer") navigate("/consumer");
         else if (role === "provider") navigate("/provider");
         else if (role === "admin") navigate("/admin");
@@ -127,13 +126,6 @@ function ProtectedRoute({ children, role: requiredRole }) {
     return <PublicHome />;
   }
 
-  // Pick correct dashboard page
-  // let Dashboard = null;
-  // if (role === "consumer") Dashboard = <ConsumerHome />;
-  // else if (role === "provider") Dashboard = <ProviderHome />;
-  // else if (role === "admin") Dashboard = <Admin />;
-  // else Dashboard = <div>Unauthorized</div>;
-
   return (
     <Layout>
       <Header
@@ -143,7 +135,10 @@ function ProtectedRoute({ children, role: requiredRole }) {
           zIndex: 1,
           width: "100%",
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
+          padding: "0 24px",
+          backgroundColor: "#001529",
         }}
       >
         <h3
@@ -160,7 +155,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
         </h3>
         <Menu theme="dark" mode="horizontal" items={navItems} />
       </Header>
-      <Content style={{ padding: 24, minHeight: 380, background: "#fff" }}>
+      <Content style={{ padding: 24, minHeight: '100vh', background: "#fff" ,overflowY:'auto'}}>
         {children}
       </Content>
     </Layout>

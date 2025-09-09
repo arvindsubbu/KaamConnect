@@ -19,12 +19,18 @@ const workSchema = mongoose.Schema({
         type : Number,
         required : true,
     },
+    paymentStatus : {
+       type : String,
+       enum : ['pending','paid','failed'],
+       default : 'pending',
+    },
     status : {
         type : String,
         enum : ['pending','accepted','in-progress','completed','cancelled'],
         default : 'pending',
     },
     scheduledDate : Date,
+    completedAt : Date,
     review : {
         rating : {type : Number,min : 1,max : 5},
         comment : String,
