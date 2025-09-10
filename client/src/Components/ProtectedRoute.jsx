@@ -7,7 +7,7 @@ import { setRole, clearRole } from "../redux/roleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import PublicHome from "../pages/PublicHome";
 
-const { Header, Content } = Layout;
+const { Header, Content ,Footer} = Layout;
 
 function ProtectedRoute({ children, role: requiredRole }) {
   const role = useSelector((state) => state.role.value);
@@ -86,7 +86,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
       },
     },
     {
-      label: user ? user.name : "",
+      label: user ? user.name : "User",
       key: "profile",
       icon: <UserOutlined />,
       children: [
@@ -127,7 +127,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
   }
 
   return (
-    <Layout>
+    <Layout >
       <Header
         style={{
           position: "sticky",
@@ -138,7 +138,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
           justifyContent: "space-between",
           alignItems: "center",
           padding: "0 24px",
-          backgroundColor: "#001529",
+          backgroundColor: "black",
         }}
       >
         <h3
@@ -155,9 +155,26 @@ function ProtectedRoute({ children, role: requiredRole }) {
         </h3>
         <Menu theme="dark" mode="horizontal" items={navItems} />
       </Header>
-      <Content style={{ padding: 24, minHeight: '100vh', background: "#fff" ,overflowY:'auto'}}>
+      {/* <div className="min-h-screen overflow-y-auto bg-gray-50">
         {children}
+      </div> */}
+      <Content style={{ background: "#f9fafb", padding: "0" }}>
+        <div style={{ paddingBottom: "4rem" }}>{children}</div>
       </Content>
+      <Footer style={{ textAlign: "center" }}>
+        {!role ? (
+          <Row gutter={16} justify="center">
+            <Col><Text>About Us</Text></Col>
+            <Col><Text>Contact</Text></Col>
+            <Col><Text>Help</Text></Col>
+            <Col><Text>Terms</Text></Col>
+            <Col><Text>Privacy</Text></Col>
+          </Row>
+        ) : (
+          <div>Quick Links: Dashboard | Support</div>
+        )}
+        <div style={{ marginTop: 20 }}>© {new Date().getFullYear()} KaamConnect</div>
+      </Footer>
     </Layout>
   );
 }

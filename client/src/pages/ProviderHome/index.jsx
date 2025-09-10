@@ -96,8 +96,8 @@ function ProviderHome() {
   ];
 
   return (
-    <Layout className="min-h-screen bg-gray-50">
-      <Content className="w-full max-w-full sm:max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+    <div >
+      <div className="w-full max-w-full sm:max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 pb-24">
         {/* KPI Cards */}
         <Row gutter={[12, 12]} className="mb-4 sm:mb-6">
           <Col xs={12} sm={12} md={8}>
@@ -237,7 +237,7 @@ function ProviderHome() {
         </section>
 
         {/* Services & Availability */}
-        <section>
+        <section className="pb-9">
           <h2 className="text-base sm:text-lg font-semibold mb-3">Services & Availability</h2>
           <Card className="rounded-2xl shadow p-3 sm:p-5">
             <div className="mb-2 text-sm sm:text-base">
@@ -251,8 +251,11 @@ function ProviderHome() {
             </Button>
           </Card>
         </section>
-      </Content>
-    </Layout>
+      </div>
+      
+
+    </div>
+    
   );
 }
 
