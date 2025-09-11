@@ -36,7 +36,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
           setUser(response.data);
           if (location.pathname === "/") {
             if (response.data.role === "consumer")
-              navigate("/consumer", { replace: true });
+              navigate("/service", { replace: true });
             else if (response.data.role === "provider")
               navigate("/provider", { replace: true });
             else if (response.data.role === "admin")
@@ -80,7 +80,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
       icon: <HomeOutlined />,
       onClick: () => {
         console.log("home button clicked");
-        if (role === "consumer") navigate("/consumer");
+        if (role === "consumer") navigate("/service");
         else if (role === "provider") navigate("/provider");
         else if (role === "admin") navigate("/admin");
       },
@@ -94,7 +94,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
           label: (
             <span
               onClick={() => {
-                if (role === "consumer") navigate("/consumer/profile");
+                if (role === "consumer") navigate("/service/profile");
                 else if (role === "provider") navigate("/provider/profile");
                 else if (role === "admin") navigate("/admin/profile");
               }}
@@ -145,7 +145,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
           className="text-white m-0"
           style={{ color: "white", cursor: "pointer" }}
           onClick={() => {
-            if (role === "consumer") navigate("/consumer");
+            if (role === "consumer") navigate("/service");
             else if (role === "provider") navigate("/provider");
             else if (role === "admin") navigate("/admin");
             else navigate("/");

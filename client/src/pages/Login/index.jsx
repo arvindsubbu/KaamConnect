@@ -21,7 +21,7 @@ function Login() {
         localStorage.setItem("token", response.data);
         const role = response.role;
         dispatch(setRole(role));
-        if (role === "consumer") navigate("/consumer");
+        if (role === "consumer") navigate("/service");
         else if (role === "provider") navigate("/provider");
         else if (role === "admin") navigate("/admin");
         else navigate("/");

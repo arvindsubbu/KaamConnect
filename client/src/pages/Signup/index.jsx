@@ -21,27 +21,52 @@ const { Option } = Select;
 function Signup() {
   //use redux to store the role
   const [role, setRole] = useState("consumer"); // consumer or provider
+  const [locationOptions, setLocationOptions] = useState([]);
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
-  console.log(values);
-  
-      try{
-        const payload = {...values,role};
-         const response = await signUpUser(payload);
+    console.log(values);
+
+    try {
+      const payload = { ...values, role };
+      const response = await signUpUser(payload);
       //  console.log(response);
-        if(response.success){
-          toast.success(response.message);
-          form.resetFields();
-        }else{
-          toast.error(response.message);
-          console.log(response.message);
-        }
-      }catch(err){
-               console.log(err);
-      }  
-      
-      
+      if (response.success) {
+        toast.success(response.message);
+        form.resetFields();
+      } else {
+        toast.error(response.message);
+        console.log(response.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchLocations = async (value) => {
+    if (!value) {
+      setLocationOptions([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `https://us1.locationiq.com/v1/autocomplete.php?key=pk.9d58d41767692caa4dc79a7396b1fe6a&q=${encodeURIComponent(
+          value
+        )}&countrycodes=IN&limit=6&normalizecity=1`
+      );
+      const data = await res.json();
+
+      setLocationOptions(
+        data.map((place) => ({
+          value: place.display_name, //stored in form
+          label: place.display_name, //user sees in dropdown
+        }))
+      );
+    } catch (err) {
+      console.error("LocationIQ error:", err);
+      setLocationOptions([]);
+    }
   };
 
   return (
@@ -58,7 +83,7 @@ function Signup() {
         onFinish={onFinish}
         style={{ marginTop: 20 }}
       >
-        <Form.Item name='role'>
+        <Form.Item name="role">
           <Radio.Group
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -87,16 +112,19 @@ function Signup() {
           rules={[
             { required: true, message: "Please enter your phone number" },
             {
-              pattern : /^\d{10}$/,
-              message : 'Phone number must be exactly 10 digits'
-            }
+              pattern: /^\d{10}$/,
+              message: "Phone number must be exactly 10 digits",
+            },
           ]}
         >
           <Input placeholder="Phone Number" type="number" />
         </Form.Item>
 
-        <Form.Item name="email" rules={[{type : 'email',message : 'Enter a valid Email'}]}>
-          <Input placeholder="Email (optional)"/>
+        <Form.Item
+          name="email"
+          rules={[{ type: "email", message: "Enter a valid Email" }]}
+        >
+          <Input placeholder="Email (optional)" />
         </Form.Item>
 
         <Row gutter={16}>
@@ -117,7 +145,7 @@ function Signup() {
               dependencies={["password"]}
               hasFeedback
               rules={[
-                { required: true, message: "Please confirm your password"},
+                { required: true, message: "Please confirm your password" },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (!value || getFieldValue("password") === value) {
@@ -137,11 +165,14 @@ function Signup() {
           name="location"
           rules={[{ required: true, message: "Please select your location" }]}
         >
-          <Select placeholder="Location">
-            <Option value="chennai">Chennai</Option>
-            <Option value="bangalore">Bangalore</Option>
-            <Option value="mumbai">Mumbai</Option>
-          </Select>
+          <Select
+            showSearch
+            placeholder="Search for your city / area"
+            filterOption={false}
+            onSearch={fetchLocations} 
+            options={locationOptions} 
+            notFoundContent={null} 
+          />
         </Form.Item>
 
         {/* Extra Fields for Providers */}
@@ -200,7 +231,7 @@ function Signup() {
         </Form.Item>
 
         <Text>
-          Already have an account? <Link to='/login'>Log In</Link>
+          Already have an account? <Link to="/login">Log In</Link>
         </Text>
       </Form>
     </main>
