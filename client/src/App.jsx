@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Home from "./pages/PublicHome";
 import ProviderHome from "./pages/ProviderHome";
 import Admin from "./pages/Admin";
+import ServiceResults from "./pages/ServiceResults";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -52,6 +53,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/service/:location?/:service?" element={<ServiceResults/>}/>
           </Routes>
         </BrowserRouter>
       </Provider>

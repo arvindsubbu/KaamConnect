@@ -19,7 +19,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("ProtectedRoute useEffect triggered");
+   // console.log("ProtectedRoute useEffect triggered");
     const checkAuth = async () => {
       if (!localStorage.getItem("token")) {
         setLoading(false);
@@ -32,7 +32,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
         if (response.success) {
           // console.log("API returned role:", response.data.role);
           dispatch(setRole(response.data.role));
-          console.log(response.data);
+         // console.log(response.data);
           setUser(response.data);
           if (location.pathname === "/") {
             if (response.data.role === "consumer")
