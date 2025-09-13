@@ -17,93 +17,61 @@ import {
   EnvironmentOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import LocationModal from "./LocationModal";
+import LocationModal from "../../Components/LocationModal";
+import BookServiceModal from "../../Components/BookServiceModal";
 import useLocationSearch from "../../hooks/useLocationSearch";
 import { slugify } from "../../utils/slugify";
 import { getCurrentLocation } from "../../hooks/getCurrentLocation";
+import ServiceSearchModal from "../../Components/serviceSearchModal";
+import { serviceCategories } from "../../utils/serviceCategories";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-const categories = [
-  { icon: "🔧", label: "Plumber" },
-  { icon: "⚡", label: "Electrician" },
-  { icon: "🏠", label: "Maid" },
-  { icon: "🎁", label: "Decorator" },
-  { icon: "🌸", label: "Flowers" },
-  { icon: "🪚", label: "Carpenter" },
-  { icon: "🚚", label: "Movers" },
-  { icon: "🖥️", label: "Computer Repair" },
-  { icon: "📱", label: "Mobile Repair" },
-  { icon: "🧹", label: "Cleaning" },
-  { icon: "🍴", label: "Cook" },
-  { icon: "🚗", label: "Driver" },
-  { icon: "🎶", label: "DJ / Music" },
-  { icon: "📦", label: "Packers & Movers" },
-  { icon: "🛠️", label: "Mechanic" },
-  { icon: "👶", label: "Babysitter" },
-  { icon: "👵", label: "Elder Care" },
-  { icon: "🐶", label: "Pet Care" },
-  { icon: "🛋️", label: "Furniture Assembly" },
-  { icon: "💇", label: "Salon at Home" },
-];
-
 const workers = [
   {
+    id: 1,
     name: "Rajesh Kumar",
     service: "Plumber",
     rating: 4.8,
     jobs: 120,
-    price: "₹200",
+    price: "₹200 onwards",
+    location: "Andheri East, Mumbai",
     photo: "/uploads/workers/rajesh.jpg",
   },
   {
+    id: 2,
     name: "Anita Sharma",
     service: "Maid",
     rating: 4.9,
     jobs: 95,
-    price: "₹150",
+    price: "₹150 onwards",
+    location: "Bandra West, Mumbai",
     photo: "/uploads/workers/anita.jpg",
   },
   {
+    id: 3,
     name: "Suresh Yadav",
     service: "Plumber",
     rating: 4.6,
     jobs: 80,
-    price: "₹180",
+    price: "₹180 onwards",
+    location: "Dadar, Mumbai",
     photo: "/uploads/workers/suresh.jpg",
   },
 ];
 
 function Consumer() {
-  const { locationSearch, setLocationSearch, suggestions } =   useLocationSearch(); // not using setSuggestions
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const { locationSearch, setLocationSearch, suggestions } =
+    useLocationSearch(); // not using setSuggestions
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
-
-  console.log(selectedLocation);
-
-  const buildUrl = (service, location) => {
-    let url = "/service";
-    if (location && service) {
-      url += `/${location.toLowerCase()}/${service.toLowerCase()}`;
-    }else if(service){
-      url += `/${service.toLowerCase()}`;
-    }
-    return url;
-  }; 
+  const [isBookServiceModalOpen, setIsBookServiceModalOpen] = useState(false);
+  const [selectedWorker, setSelectedWorker] = useState(null);
 
   const navigate = useNavigate();
-  // debounce for service search
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 300);
-    return () => clearTimeout(handler);
-  }, [search]);
-
   return (
     <Layout className="bg-gray-50">
       <Content className="p-6 md:p-12">
@@ -136,7 +104,7 @@ function Consumer() {
             <Col xs={24} sm={10}>
               <div
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 flex items-center cursor-pointer"
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setIsSearchModalOpen(true)}
               >
                 <SearchOutlined className="mr-2 text-gray-400" />
                 <span className="text-gray-400">Search for service!!</span>
@@ -145,78 +113,20 @@ function Consumer() {
           </Row>
         </div>
 
-        {/* service search modal */}
-        <Modal
-          title="Find a Service"
-          open={isModalOpen}
-          footer={null}
-          onCancel={() => {
-            setIsModalOpen(false);
-          }}
-          width={600}
-          styles={{
-            body: { maxHeight: "60vh", overflowY: "auto" },
-          }}
-        >
-          {/* Search inside modal */}
-          <Input
-            autoFocus
-            placeholder="Search for service!!"
-            prefix={<SearchOutlined />}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="mb-4"
-          />
-
-          {/* Category list */}
-          <List
-            dataSource={categories.filter((cat) =>
-              cat.label.toLowerCase().includes(debouncedSearch.toLowerCase())
-            )}
-            renderItem={(cat) => (
-              <List.Item
-                onClick={() => {
-                  // setSelectedService(cat.label);
-                  setIsModalOpen(false);
-                  //use slugify to remove unwanted char
-                  const url = buildUrl(cat.label, selectedLocation);
-                  navigate(url);
-                }}
-                className="cursor-pointer hover:bg-gray-50 rounded px-2"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{cat.icon}</span>
-                  <Text strong>{cat.label}</Text>
-                </div>
-              </List.Item>
-            )}
-          />
-        </Modal>
-
-        {/* location modal */}
-        <LocationModal
-        open={isLocationModalOpen}
-        onCancel={() => setIsLocationModalOpen(false)}
-        suggestions={suggestions}
-        locationSearch={locationSearch}
-        setLocationSearch={setLocationSearch}
-        onUseCurrentLocation={()=> getCurrentLocation(setSelectedLocation,setIsLocationModalOpen,navigate)}
-        onSelectLocation={(item) => {
-          setSelectedLocation(slugify(item.name));
-          setIsLocationModalOpen(false);
-        }}
-        />
-
         {/* Categories */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">Categories</h2>
           {/* Scrollable container */}
           <div className="flex gap-4 overflow-x-auto pb-2">
-            {categories.map((cat, idx) => (
+            {serviceCategories.map((cat, idx) => (
               <Card
                 key={idx}
                 hoverable
                 className="min-w-[120px] text-center rounded-lg shadow-sm"
+                onClick={() => {
+                  navigate(`/service/${cat.label.toLowerCase()}`);
+                  setSearch(cat.label);
+                }}
               >
                 <div className="text-3xl mb-2">{cat.icon}</div>
                 <Text strong>{cat.label}</Text>
@@ -269,7 +179,16 @@ function Consumer() {
                         <Text strong>{w.price}</Text>
                       </div>
                     </div>
-                    <Button type="primary">Book Now</Button>
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                         setSelectedWorker(w);
+                        setIsBookServiceModalOpen(true);
+                       
+                      }}
+                    >
+                      Book Now
+                    </Button>
                   </div>
                 </Card>
               </Col>
@@ -301,6 +220,43 @@ function Consumer() {
             </Col>
           </Row>
         </div>
+
+        {/* service search modal */}
+        <ServiceSearchModal
+          open={isSearchModalOpen}
+          onCancel={() => setIsSearchModalOpen(false)}
+          setSelectedService={setSelectedService}
+          selectedService={selectedService}
+          selectedLocation={selectedLocation}
+        />
+
+        {/* location modal */}
+        <LocationModal
+          open={isLocationModalOpen}
+          onCancel={() => setIsLocationModalOpen(false)}
+          suggestions={suggestions}
+          locationSearch={locationSearch}
+          setLocationSearch={setLocationSearch}
+          onUseCurrentLocation={() =>
+            getCurrentLocation(
+              setSelectedLocation,
+              setIsLocationModalOpen,
+              navigate
+            )
+          }
+          onSelectLocation={(item) => {
+            setSelectedLocation(slugify(item.name));
+            setIsLocationModalOpen(false);
+          }}
+        />
+
+        {/* Book service modal */}
+        <BookServiceModal
+          open={isBookServiceModalOpen}
+          onCancel={() => setIsBookServiceModalOpen(false)}
+          selectedWorker={selectedWorker}
+          onConfirm={(data) => console.log("book from comsumer home", data)}
+        />
       </Content>
     </Layout>
   );

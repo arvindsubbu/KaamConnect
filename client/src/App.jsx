@@ -53,7 +53,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/service/:location?/:service?" element={<ServiceResults/>}/>
+            <Route path="/service/:location?/:service?" element={<ProtectedRoute role='consumer'><ServiceResults/></ProtectedRoute>}/>
           </Routes>
         </BrowserRouter>
       </Provider>
