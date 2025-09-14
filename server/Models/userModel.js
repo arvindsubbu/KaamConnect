@@ -21,13 +21,29 @@ const userSchema = new mongoose.Schema(
       enum: ["consumer", "provider"],
       required: true,
     },
-    location : {
-      type : String,
-      required : true,
-    }
+    location: {
+      city: String,
+      state: String,
+      pincode: String,
+      coordinates: {
+        type : {
+            type : String,
+            enum : ['Point'],
+            required : true,
+            default : 'Point'
+        },
+        coordinates : {
+            type : [Number],
+            required : true,
+        }
+      },
+    },
+    email: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
 
-const userModel = mongoose.model('User', userSchema);
+const userModel = mongoose.model("User", userSchema);
 module.exports = userModel;

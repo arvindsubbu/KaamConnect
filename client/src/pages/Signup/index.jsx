@@ -14,6 +14,8 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { signUpUser } from "../../api/userApi";
 import { toast } from "react-hot-toast";
+import { serviceCategories } from "../../utils/serviceCategories";
+import debounce from 'lodash.debounce';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -25,10 +27,23 @@ function Signup() {
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
-    console.log(values);
+
+   const selectedLocation = locationOptions.find((opt)=> opt.value === values.location);
 
     try {
-      const payload = { ...values, role };
+      const payload = { ...values, role , location : selectedLocation ? {
+            city: selectedLocation.city,
+            state: selectedLocation.state,
+            pincode: selectedLocation.pincode,
+            coordinates: {
+              type: "Point",
+              coordinates: [
+                parseFloat(selectedLocation.lon),
+                parseFloat(selectedLocation.lat),
+              ],
+            },
+          }
+        : null,};
       const response = await signUpUser(payload);
       //  console.log(response);
       if (response.success) {
@@ -56,11 +71,22 @@ function Signup() {
         )}&countrycodes=IN&limit=6&normalizecity=1`
       );
       const data = await res.json();
+      // console.log(data);
 
+      //console.log('lat',data[0].lat);
+      //console.log('lon',data[0].lon);
       setLocationOptions(
         data.map((place) => ({
-          value: place.display_name, //stored in form
+          value: place.place_id, //stored in form
           label: place.display_name, //user sees in dropdown
+          lat: place.lat,
+          lon: place.lon,
+          city:
+            place.address?.city ||
+            place.address?.town ||
+            place.address?.village,
+          state: place.address?.state,
+          pincode: place.address?.postcode,
         }))
       );
     } catch (err) {
@@ -69,6 +95,7 @@ function Signup() {
     }
   };
 
+  const debouncedFetchLocation = debounce(fetchLocations,300);
   return (
     <main className="text-center" style={{ maxWidth: 450, margin: "0 auto" }}>
       <Title level={2}>KaamConnect</Title>
@@ -169,9 +196,13 @@ function Signup() {
             showSearch
             placeholder="Search for your city / area"
             filterOption={false}
-            onSearch={fetchLocations} 
-            options={locationOptions} 
-            notFoundContent={null} 
+            onSearch={debouncedFetchLocation}
+            options={locationOptions.map((data,idx)=>({
+              key : idx,
+              value : data.value,
+              label : data.label
+            }))}
+            notFoundContent={null}
           />
         </Form.Item>
 
@@ -186,16 +217,18 @@ function Signup() {
                     { required: true, message: "Please select a category" },
                   ]}
                 >
-                  <Select placeholder="Service Category">
-                    <Option value="plumber">Plumber</Option>
-                    <Option value="electrician">Electrician</Option>
-                    <Option value="carpenter">Carpenter</Option>
+                  <Select showSearch placeholder="Select a service">
+                    {serviceCategories.map((service) => (
+                      <Option key={service.label} value={service.label}>
+                        {service.icon} {service.label}
+                      </Option>
+                    ))}
                   </Select>
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
-                  name="experience"
+                  name="yearsOfExperience"
                   rules={[
                     { required: true, message: "Enter experience in years" },
                   ]}

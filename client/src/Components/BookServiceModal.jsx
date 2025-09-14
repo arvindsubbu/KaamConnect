@@ -20,7 +20,7 @@ function BookServiceModal({ open, onCancel, selectedWorker, onConfirm }) {
   return (
     <Modal
       open={open}
-      onCancel={onCancel}
+      onCancel={ onCancel}
       footer={null}
       title={`Book ${selectedWorker?.service}`}
     >
@@ -44,7 +44,7 @@ function BookServiceModal({ open, onCancel, selectedWorker, onConfirm }) {
           if(onConfirm){
             onConfirm(values)
           }
-          onCancel();
+          onCancel;
         }}
       >
         <Form.Item
@@ -116,11 +116,11 @@ function BookServiceModal({ open, onCancel, selectedWorker, onConfirm }) {
               size="large"
               className="flex-1"
               onClick={() => {
-                form.resetFields();
+               // form.resetFields();
                 onCancel();
               }}
             >
-              Cancel Booking
+              Cancel
             </Button>
           </div>
         </Form.Item>

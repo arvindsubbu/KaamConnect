@@ -125,7 +125,7 @@ function Consumer() {
                 className="min-w-[120px] text-center rounded-lg shadow-sm"
                 onClick={() => {
                   navigate(`/service/${cat.label.toLowerCase()}`);
-                  setSearch(cat.label);
+                  //setSearch(cat.label);
                 }}
               >
                 <div className="text-3xl mb-2">{cat.icon}</div>
