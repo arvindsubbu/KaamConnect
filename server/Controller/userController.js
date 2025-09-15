@@ -55,14 +55,16 @@ const loginUser = async (req, res) => {
         message: "Invalid password",
       });
     }
-    const token = jwt.sign({ userId: user._id }, process.env.secret_key, {
+    console.log(user);
+    const token = jwt.sign({ userId: user._id,role : user.role }, process.env.secret_key, {
       expiresIn: "1d",
     });
+    console.log(token);
+    
     res.send({
       success: true,
       message: "User logged in successfully",
       data: token,
-      role: user.role,
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -79,10 +81,17 @@ const getCurrentUser = async (req, res) => {
         message: "User not found",
       });
     }
+    const consumer = user.toObject();
+
+    const provider = await Provider.findOne({userId : user._id});
+
     res.send({
       success: true,
       message: "You are authorized to go to the protected route",
-      data: user,
+      data: {
+        consumer,
+        provider : provider || null ,
+      },
     });
   } catch (err) {
     res.status(400).json({ message: err.message });

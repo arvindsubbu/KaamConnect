@@ -8,7 +8,8 @@ const auth = (req,res,next)=>{
         const verifiedToken = jwt.verify(token,process.env.secret_key);
         console.log('verfication key',verifiedToken);
         req.userId =verifiedToken.userId;
-        console.log(req.body)
+        req.userRole = verifiedToken.role;
+        //console.log('from middleware',req)
         next();
     }catch(err){
         res.status(401).json({message : 'Unauthorized access'});

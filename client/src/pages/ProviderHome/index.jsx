@@ -43,7 +43,10 @@ function ProviderHome() {
       key: "action",
       render: () => (
         <div className="flex gap-2 flex-wrap">
-          <Button type="primary" className="bg-green-500 w-full sm:w-auto text-sm sm:text-base">
+          <Button
+            type="primary"
+            className="bg-green-500 w-full sm:w-auto text-sm sm:text-base"
+          >
             Accept
           </Button>
           <Button danger className="w-full sm:w-auto text-sm sm:text-base">
@@ -96,31 +99,45 @@ function ProviderHome() {
   ];
 
   return (
-    <div >
+    <div>
       <div className="w-full max-w-full sm:max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 pb-24">
         {/* KPI Cards */}
         <Row gutter={[12, 12]} className="mb-4 sm:mb-6">
           <Col xs={12} sm={12} md={8}>
             <Card className="rounded-2xl shadow text-center p-3 sm:p-6">
-              <div className="text-gray-500 text-sm sm:text-base">Active Jobs</div>
-              <div className="text-lg sm:text-2xl font-bold">{kpis.activeJobs}</div>
+              <div className="text-gray-500 text-sm sm:text-base">
+                Active Jobs
+              </div>
+              <div className="text-lg sm:text-2xl font-bold">
+                {kpis.activeJobs}
+              </div>
             </Card>
           </Col>
           <Col xs={12} sm={12} md={8}>
             <Card className="rounded-2xl shadow text-center p-3 sm:p-6">
-              <div className="text-gray-500 text-sm sm:text-base">Pending Requests</div>
-              <div className="text-lg sm:text-2xl font-bold">{kpis.pendingRequests}</div>
+              <div className="text-gray-500 text-sm sm:text-base">
+                Pending Requests
+              </div>
+              <div className="text-lg sm:text-2xl font-bold">
+                {kpis.pendingRequests}
+              </div>
             </Card>
           </Col>
           <Col xs={12} sm={12} md={8}>
             <Card className="rounded-2xl shadow text-center p-3 sm:p-6">
-              <div className="text-gray-500 text-sm sm:text-base">Completed Jobs</div>
-              <div className="text-lg sm:text-2xl font-bold">{kpis.completedJobs}</div>
+              <div className="text-gray-500 text-sm sm:text-base">
+                Completed Jobs
+              </div>
+              <div className="text-lg sm:text-2xl font-bold">
+                {kpis.completedJobs}
+              </div>
             </Card>
           </Col>
           <Col xs={12} sm={12} md={8}>
             <Card className="rounded-2xl shadow text-center p-3 sm:p-6">
-              <div className="text-gray-500 text-sm sm:text-base">Average Rating</div>
+              <div className="text-gray-500 text-sm sm:text-base">
+                Average Rating
+              </div>
               <div className="flex items-center justify-center gap-1 sm:gap-2 text-lg sm:text-2xl font-bold">
                 <span>{kpis.averageRating}</span>
                 <Rate disabled defaultValue={Math.round(kpis.averageRating)} />
@@ -129,20 +146,32 @@ function ProviderHome() {
           </Col>
           <Col xs={12} sm={12} md={8}>
             <Card className="rounded-2xl shadow text-center p-3 sm:p-6">
-              <div className="text-gray-500 text-sm sm:text-base">Monthly Earnings</div>
-              <div className="text-lg sm:text-2xl font-bold">₹{kpis.monthlyEarnings}</div>
+              <div className="text-gray-500 text-sm sm:text-base">
+                Monthly Earnings
+              </div>
+              <div className="text-lg sm:text-2xl font-bold">
+                ₹{kpis.monthlyEarnings}
+              </div>
             </Card>
           </Col>
         </Row>
 
         {/* Incoming Requests */}
         <section className="mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-lg font-semibold mb-3">Incoming Requests</h2>
+          <h2 className="text-base sm:text-lg font-semibold mb-3">
+            Incoming Requests
+          </h2>
           <Card className="rounded-2xl shadow p-2 sm:p-4">
             {/* Desktop / Tablet Table */}
             <div className="hidden sm:block">
               <Table
-                columns={requestColumns}
+                columns={requestColumns.map((col) => ({
+                  ...col,
+                  ellipsis: true, // optional for clean look
+                  onHeaderCell: () => ({ style: { textAlign: "center" } }),
+                  onCell: () => ({ style: { textAlign: "center" } }),
+                  width: 150, // 👈 fixed width per column
+                }))}
                 dataSource={requests}
                 pagination={false}
               />
@@ -162,12 +191,16 @@ function ProviderHome() {
 
         {/* Active Jobs */}
         <section className="mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-lg font-semibold mb-3">Active Jobs</h2>
+          <h2 className="text-base sm:text-lg font-semibold mb-3">
+            Active Jobs
+          </h2>
           <Row gutter={[12, 12]}>
             {activeJobs.map((job) => (
               <Col key={job.id} xs={24} sm={12}>
                 <Card className="rounded-2xl shadow p-3 sm:p-5 cursor-pointer hover:shadow-lg transition">
-                  <div className="font-semibold text-sm sm:text-base">{job.title}</div>
+                  <div className="font-semibold text-sm sm:text-base">
+                    {job.title}
+                  </div>
                   <Tag
                     color={job.status === "In Progress" ? "blue" : "orange"}
                     className="my-2"
@@ -190,7 +223,9 @@ function ProviderHome() {
         <Row gutter={[12, 12]} className="mb-4 sm:mb-6">
           <Col xs={24} md={16}>
             <Card className="rounded-2xl shadow p-3 sm:p-5">
-              <h2 className="text-base sm:text-lg font-semibold mb-3">Earnings Overview</h2>
+              <h2 className="text-base sm:text-lg font-semibold mb-3">
+                Earnings Overview
+              </h2>
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={earningsData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -204,7 +239,9 @@ function ProviderHome() {
           </Col>
           <Col xs={24} md={8}>
             <Card className="rounded-2xl shadow p-3 sm:p-5">
-              <h2 className="text-base sm:text-lg font-semibold mb-3">Recent Payouts</h2>
+              <h2 className="text-base sm:text-lg font-semibold mb-3">
+                Recent Payouts
+              </h2>
               <List
                 dataSource={payouts}
                 renderItem={(item) => (
@@ -222,14 +259,20 @@ function ProviderHome() {
 
         {/* Reviews */}
         <section className="mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-lg font-semibold mb-3">Client Reviews</h2>
+          <h2 className="text-base sm:text-lg font-semibold mb-3">
+            Client Reviews
+          </h2>
           <Row gutter={[12, 12]}>
             {reviews.map((review) => (
               <Col key={review.id} xs={24} sm={12}>
                 <Card className="rounded-2xl shadow p-3 sm:p-5">
-                  <div className="font-semibold text-sm sm:text-base">{review.client}</div>
+                  <div className="font-semibold text-sm sm:text-base">
+                    {review.client}
+                  </div>
                   <Rate disabled defaultValue={review.rating} />
-                  <div className="text-gray-600 text-xs sm:text-sm mt-2">{review.text}</div>
+                  <div className="text-gray-600 text-xs sm:text-sm mt-2">
+                    {review.text}
+                  </div>
                 </Card>
               </Col>
             ))}
@@ -238,24 +281,28 @@ function ProviderHome() {
 
         {/* Services & Availability */}
         <section className="pb-9">
-          <h2 className="text-base sm:text-lg font-semibold mb-3">Services & Availability</h2>
+          <h2 className="text-base sm:text-lg font-semibold mb-3">
+            Services & Availability
+          </h2>
           <Card className="rounded-2xl shadow p-3 sm:p-5">
             <div className="mb-2 text-sm sm:text-base">
-              You offer: <span className="font-semibold">Plumbing, Electrician</span>
+              You offer:{" "}
+              <span className="font-semibold">Plumbing, Electrician</span>
             </div>
             <div className="mb-4 text-sm sm:text-base">
-              Availability: <span className="font-semibold">Mon - Sat, 9 AM - 6 PM</span>
+              Availability:{" "}
+              <span className="font-semibold">Mon - Sat, 9 AM - 6 PM</span>
             </div>
-            <Button type="primary" className="bg-blue-600 w-full sm:w-auto text-sm sm:text-base">
+            <Button
+              type="primary"
+              className="bg-blue-600 w-full sm:w-auto text-sm sm:text-base"
+            >
               Edit Services
             </Button>
           </Card>
         </section>
       </div>
-      
-
     </div>
-    
   );
 }
 

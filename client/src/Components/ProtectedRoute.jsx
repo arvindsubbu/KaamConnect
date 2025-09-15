@@ -30,16 +30,16 @@ function ProtectedRoute({ children, role: requiredRole }) {
         const response = await getCurrentUser();
 
         if (response.success) {
-          // console.log("API returned role:", response.data.role);
-          dispatch(setRole(response.data.role));
+          console.log("API returned role:", response.data);
+          dispatch(setRole(response.data.consumer.role));
          // console.log(response.data);
-          setUser(response.data);
+          setUser(response.data.consumer);
           if (location.pathname === "/") {
-            if (response.data.role === "consumer")
+            if (response.data.consumer.role === "consumer")
               navigate("/service", { replace: true });
-            else if (response.data.role === "provider")
+            else if (response.data.consumer.role === "provider")
               navigate("/provider", { replace: true });
-            else if (response.data.role === "admin")
+            else if (response.data.consumer.role === "admin")
               navigate("/admin", { replace: true });
           }
         } else {
