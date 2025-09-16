@@ -24,6 +24,7 @@ import { slugify } from "../../utils/slugify";
 import { getCurrentLocation } from "../../hooks/getCurrentLocation";
 import ServiceSearchModal from "../../Components/serviceSearchModal";
 import { serviceCategories } from "../../utils/serviceCategories";
+import { useSelector } from "react-redux";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -61,9 +62,9 @@ const workers = [
   },
 ];
 
-function Consumer() {
-  const { locationSearch, setLocationSearch, suggestions } =
-    useLocationSearch(); // not using setSuggestions
+function Consumer({username}) {
+  const user = useSelector((state)=> state.role.user);
+  const { locationSearch, setLocationSearch, suggestions } = useLocationSearch(); // not using setSuggestions
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -78,7 +79,7 @@ function Consumer() {
         {/* Greeting */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <Title level={3}>
-            Welcome back, <span>Arvind 👋</span>
+            Welcome back, <span>{username} 👋</span>
           </Title>
 
           <Row gutter={[16, 16]} className="mt-3">

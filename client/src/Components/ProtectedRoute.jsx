@@ -7,19 +7,20 @@ import { setRole, clearRole } from "../redux/roleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import PublicHome from "../pages/PublicHome";
 
-const { Header, Content ,Footer} = Layout;
+const { Header, Content, Footer } = Layout;
 
 function ProtectedRoute({ children, role: requiredRole }) {
   const role = useSelector((state) => state.role.value);
   //  console.log(role);
+  const [user,setUser] = useState('');
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  //const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
 
   useEffect(() => {
-   // console.log("ProtectedRoute useEffect triggered");
+    // console.log("ProtectedRoute useEffect triggered");
     const checkAuth = async () => {
       if (!localStorage.getItem("token")) {
         setLoading(false);
@@ -32,8 +33,8 @@ function ProtectedRoute({ children, role: requiredRole }) {
         if (response.success) {
           console.log("API returned role:", response.data);
           dispatch(setRole(response.data.consumer.role));
-         // console.log(response.data);
-          setUser(response.data.consumer);
+          setUser(response.data.consumer.name);
+          // console.log(response.data);
           if (location.pathname === "/") {
             if (response.data.consumer.role === "consumer")
               navigate("/service", { replace: true });
@@ -86,7 +87,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
       },
     },
     {
-      label: user ? user.name : "User",
+      label: user ? user : "User",
       key: "profile",
       icon: <UserOutlined />,
       children: [
@@ -127,7 +128,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
   }
 
   return (
-    <Layout >
+    <Layout>
       <Header
         style={{
           position: "sticky",
@@ -159,21 +160,35 @@ function ProtectedRoute({ children, role: requiredRole }) {
         {children}
       </div> */}
       <Content style={{ background: "#f9fafb", padding: "0" }}>
-        <div style={{ paddingBottom: "4rem" }}>{children}</div>
+        <div style={{ paddingBottom: "4rem" }}>{React.isValidElement(children)
+      ? React.cloneElement(children, { username: user })
+      : children}</div>
       </Content>
       <Footer style={{ textAlign: "center" }}>
         {!role ? (
           <Row gutter={16} justify="center">
-            <Col><Text>About Us</Text></Col>
-            <Col><Text>Contact</Text></Col>
-            <Col><Text>Help</Text></Col>
-            <Col><Text>Terms</Text></Col>
-            <Col><Text>Privacy</Text></Col>
+            <Col>
+              <Text>About Us</Text>
+            </Col>
+            <Col>
+              <Text>Contact</Text>
+            </Col>
+            <Col>
+              <Text>Help</Text>
+            </Col>
+            <Col>
+              <Text>Terms</Text>
+            </Col>
+            <Col>
+              <Text>Privacy</Text>
+            </Col>
           </Row>
         ) : (
           <div>Quick Links: Dashboard | Support</div>
         )}
-        <div style={{ marginTop: 20 }}>© {new Date().getFullYear()} KaamConnect</div>
+        <div style={{ marginTop: 20 }}>
+          © {new Date().getFullYear()} KaamConnect
+        </div>
       </Footer>
     </Layout>
   );

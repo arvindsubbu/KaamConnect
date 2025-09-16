@@ -31,7 +31,7 @@ const getPastOrders = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid role" });
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Past orders fetched successfully",
       data: pastOrders,
@@ -40,3 +40,5 @@ const getPastOrders = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+module.exports = { getPastOrders };
