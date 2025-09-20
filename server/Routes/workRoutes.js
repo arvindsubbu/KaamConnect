@@ -1,6 +1,6 @@
 const workRouter = require("express").Router();
-const { getPastOrders } = require("../Controller/workController");
+const { getOrders } = require("../Controller/workController");
 
-workRouter.get('/get-past-order',getPastOrders);
+workRouter.get('/orders',getOrders);
 
 module.exports = workRouter;

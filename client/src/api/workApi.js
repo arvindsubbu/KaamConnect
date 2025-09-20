@@ -1,8 +1,8 @@
 import { axiosInstance } from ".";
 
-const getPastOrder = async ()=>{
+const getOrder = async (query)=>{
     try{
-         const res = await axiosInstance.get('/api/work/get-past-order');
+         const res = await axiosInstance.get(`/api/orders?status=${query}`);
      return res.data;
     }catch(err){
         console.log(err);

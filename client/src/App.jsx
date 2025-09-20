@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Home from "./pages/PublicHome";
 import ProviderHome from "./pages/ProviderHome";
 import Admin from "./pages/Admin";
+import Orders from "./pages/Orders";
 import ServiceResults from "./pages/ServiceResults";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -58,6 +59,7 @@ function App() {
         </BrowserRouter>
       </Provider>
     </>
+   
   )
     
 }

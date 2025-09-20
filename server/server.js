@@ -8,7 +8,7 @@ const workRouter = require('./Routes/workRoutes');
 connectDb();
 app.use(express.json());
 app.use('/api/user', userRouter);
-app.use('/api/work', workRouter);
+app.use('/api/orders', workRouter);
 app.listen(5000,()=>{
     console.log('server is listening at port 5000');
 })

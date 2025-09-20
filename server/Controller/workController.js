@@ -1,7 +1,7 @@
 const User = require("../Models/userModel");
 const Work = require("../Models/workModel");
 
-const getPastOrders = async (req, res) => {
+const getOrders = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
     if (!user) {
@@ -9,36 +9,36 @@ const getPastOrders = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-    let pastOrders;
+    const { status } = req.query;
+    let filter = {};
 
     if (user.role === "consumer") {
-      // consumer’s past orders
-      pastOrders = await Work.find({
-        consumerId: user._id,
-        status: "completed",
-      })
-        .populate("providerId", "name phone email") // show provider info
-        .sort({ completedAt: -1 });
+      filter.consumerId = user._id;
     } else if (user.role === "provider") {
-      // provider’s past jobs
-      pastOrders = await Work.find({
-        providerId: user._id,
-        status: "completed",
-      })
-        .populate("consumerId", "name phone email") // show consumer info
-        .sort({ completedAt: -1 });
+      filter.providerId = user._id;
     } else {
-      return res.status(400).json({ success: false, message: "Invalid role" });
+      return res.status(400).json({ succes: false, message: "Invalid role" });
     }
+
+    if (status && status !== "all") {
+      filter.status = status;
+    }
+
+    const orders = await Work.find(filter)
+      .populate(
+        user.role === "consumer" ? "providerId" : "consumerId",
+        "name phone email"
+      )
+      .sort({ updated: -1 });
 
     res.status(200).json({
       success: true,
       message: "Past orders fetched successfully",
-      data: pastOrders,
+      data: orders,
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-module.exports = { getPastOrders };
+module.exports = { getOrders };
