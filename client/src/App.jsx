@@ -54,14 +54,20 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/service/:location?/:service?" element={<ProtectedRoute role='consumer'><ServiceResults/></ProtectedRoute>}/>
+            <Route
+              path="/service/:location?/:service?"
+              element={
+                <ProtectedRoute role="consumer">
+                  <ServiceResults />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/orders" element={<ProtectedRoute><Orders/></ProtectedRoute>}/>
           </Routes>
         </BrowserRouter>
       </Provider>
     </>
-   
-  )
-    
+  );
 }
 
 export default App;

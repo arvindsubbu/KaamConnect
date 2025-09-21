@@ -8,3 +8,5 @@ const getOrder = async (query)=>{
         console.log(err);
     }
 }
+
+export {getOrder};

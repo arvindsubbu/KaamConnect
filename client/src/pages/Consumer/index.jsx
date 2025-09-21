@@ -62,9 +62,10 @@ const workers = [
   },
 ];
 
-function Consumer({username}) {
-  const user = useSelector((state)=> state.role.user);
-  const { locationSearch, setLocationSearch, suggestions } = useLocationSearch(); // not using setSuggestions
+function Consumer({ username }) {
+  const user = useSelector((state) => state.role.user);
+  const { locationSearch, setLocationSearch, suggestions } =
+    useLocationSearch(); // not using setSuggestions
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -147,7 +148,16 @@ function Consumer({username}) {
               "Favorite Workers",
             ].map((action, idx) => (
               <Col xs={12} md={6} key={idx}>
-                <Card hoverable className="text-center rounded-xl shadow-sm">
+                <Card
+                  hoverable
+                  className="text-center rounded-xl shadow-sm"
+                  onClick={() => {
+                    if (action === "View Past Orders") {
+                      navigate("/orders");
+                    }
+                    //add for other cards too
+                  }}
+                >
                   <Text>{action}</Text>
                 </Card>
               </Col>
@@ -183,9 +193,8 @@ function Consumer({username}) {
                     <Button
                       type="primary"
                       onClick={() => {
-                         setSelectedWorker(w);
+                        setSelectedWorker(w);
                         setIsBookServiceModalOpen(true);
-                       
                       }}
                     >
                       Book Now
