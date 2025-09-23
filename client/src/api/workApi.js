@@ -1,8 +1,8 @@
 import { axiosInstance } from ".";
 
-const getOrder = async (query)=>{
+const getOrder = async (status,page,limit)=>{
     try{
-         const res = await axiosInstance.get(`/api/orders?status=${query}`);
+         const res = await axiosInstance.get(`/api/orders?status=${status}&page=${page}&limit=${limit}`);
      return res.data;
     }catch(err){
         console.log(err);

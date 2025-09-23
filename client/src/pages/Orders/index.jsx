@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
   Card,
   Tabs,
@@ -9,7 +9,8 @@ import {
   Button,
   List,
   Tag,
-  Rate
+  Rate,
+  Pagination,
 } from "antd";
 import { useSelector } from "react-redux";
 import { getOrder } from "../../api/workApi";
@@ -95,7 +96,9 @@ const OrderCard = ({ role, order }) => (
     <Row justify="space-between" align="middle">
       {/* Left side */}
       <Col>
-        <h3><b>{order.service}</b></h3>
+        <h3>
+          <b>{order.service}</b>
+        </h3>
         <Tag
           color={
             order.status === "Completed"
@@ -134,7 +137,11 @@ const OrderCard = ({ role, order }) => (
             </p>
             {/* If already rated, show stars */}
             {order.rating ? (
-              <Rate disabled defaultValue={order.rating} style={{ fontSize: 14 }} />
+              <Rate
+                disabled
+                defaultValue={order.rating}
+                style={{ fontSize: 14 }}
+              />
             ) : (
               <Button type="link" size="small">
                 Leave a Review
@@ -153,11 +160,14 @@ const OrderCard = ({ role, order }) => (
 );
 
 function Orders() {
- // const [role, setRole] = useState("provider"); // try switching to "consumer"
-  const user = useSelector((state)=>state.role.value);
+  // const [role, setRole] = useState("provider"); // try switching to "consumer"
+  const user = useSelector((state) => state.role.value);
   const role = user?.role;
-  const [orders,setOrders] = useState([]);
-  const [loading,setLoading] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(null);
+  const [page, setPage] = useState(null);
+  const [status, setStatus] = useState("completed");
 
   const stats = {
     totalOrders: 40,
@@ -166,54 +176,61 @@ function Orders() {
     earnings: 12500,
     moneySaved: 2500,
   };
-  
-//   dummy data
-//   const orders = [
-//   {
-//     id: 1,
-//     service: "Plumbing",
-//     status: "Completed",
-//     date: "Sept 20, 2025",
-//     amount: 750,
-//     paymentStatus: "Paid",
-//     providerName: "John Smith",
-//     rating: 4 // already rated
-//   },
-//   {
-//     id: 2,
-//     service: "Electrical",
-//     status: "Completed",
-//     date: "Sept 18, 2025",
-//     amount: 1200,
-//     paymentStatus: "Payment Pending",
-//     providerName: "Alice Johnson",
-//     rating: null // not rated
-//   }
-// ];
 
-const fetchOrders = async (status)=>{
-  setLoading(true);
-  try{
-    const res = await getOrder(status);
-    console.log(res);
-    
-    const data = await res?.json();
-    setOrders(data);
-  }catch(err){
-    console.error('failed to fetch orders',err);
-  }
-}
+  //   dummy data
+  //   const orders = [
+  //   {
+  //     id: 1,
+  //     service: "Plumbing",
+  //     status: "Completed",
+  //     date: "Sept 20, 2025",
+  //     amount: 750,
+  //     paymentStatus: "Paid",
+  //     providerName: "John Smith",
+  //     rating: 4 // already rated
+  //   },
+  //   {
+  //     id: 2,
+  //     service: "Electrical",
+  //     status: "Completed",
+  //     date: "Sept 18, 2025",
+  //     amount: 1200,
+  //     paymentStatus: "Payment Pending",
+  //     providerName: "Alice Johnson",
+  //     rating: null // not rated
+  //   }
+  // ];
 
-useEffect(()=>{
-  //fetchOrders('completed'); uncomment this when backend data is ready
-},[role]);
+  const fetchOrders = async (status, page = 1, limit = 10) => {
+    setLoading(true);
+    try {
+      const data = await getOrder(status, page, limit);
+      console.log(data);
+
+      if (data.success) {
+        setOrders(data.data);
+        setTotal(data.pagination.total);
+        setPage(data.pagination.page);
+      } else {
+        console.error("API failed", data.message);
+      }
+    } catch (err) {
+      console.error("failed to fetch orders", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders(status,1); //uncomment this when backend data is ready
+  }, [role,page]);
 
   return (
     <div style={{ padding: "20px" }}>
       <h2 style={{ marginBottom: "20px" }}>My Orders</h2>
 
       {/* Summary cards */}
-      <StatusCards role={role} stats={stats} /> 
+      <StatusCards role={role} stats={stats} />
       {/* have to fetch from the backend */}
 
       {/* Tabs + Filters */}
@@ -221,14 +238,10 @@ useEffect(()=>{
         <Col>
           <Tabs
             defaultActiveKey="1"
-            onChange={(key)=>{
-              if(key == '1'){
-                fetchOrders('completed');
-              }else if(key === '2'){
-                fetchOrders('pending');
-              }else{
-                fetchOrders('failed');
-              }
+            onChange={(key) => {
+              const statusMap = { 1: "completed", 2: "pending", 3: "failed" };
+              setStatus(statusMap[key]);
+              fetchOrders(statusMap[key], 1);
             }}
             items={[
               {
@@ -236,11 +249,11 @@ useEffect(()=>{
                 label: "Completed",
                 children: (
                   <List
-                   loading = {loading}
-                   dataSource={orders}
-                   renderItem={(order)=>{
-                    <OrderCard key={order.id} role={role} order={order}/>
-                   }}
+                    loading={loading}
+                    dataSource={orders}
+                    renderItem={(order) => (
+                      <OrderCard key={order.id} role={role} order={order} />
+                    )}
                   />
                 ),
               },
@@ -249,11 +262,11 @@ useEffect(()=>{
                 label: "Pending",
                 children: (
                   <List
-                   loading = {loading}
-                   dataSource={orders}
-                   renderItem={(order)=>{
-                    <OrderCard key={order.id} role={role} order={order}/>
-                   }}
+                    loading={loading}
+                    dataSource={orders}
+                    renderItem={(order) => (
+                      <OrderCard key={order.id} role={role} order={order} />
+                    )}
                   />
                 ),
               },
@@ -262,11 +275,11 @@ useEffect(()=>{
                 label: "Failed",
                 children: (
                   <List
-                   loading = {loading}
-                   dataSource={orders}
-                   renderItem={(order)=>{
-                    <OrderCard key={order.id} role={role} order={order}/>
-                   }}
+                    loading={loading}
+                    dataSource={orders}
+                    renderItem={(order) => (
+                      <OrderCard key={order.id} role={role} order={order} />
+                    )}
                   />
                 ),
               },
@@ -276,7 +289,7 @@ useEffect(()=>{
         <Col>
           <Row gutter={8}>
             <Col>
-              <Select defaultValue="Date Range"  style={{ width: 150 }}>
+              <Select defaultValue="Date Range" style={{ width: 150 }}>
                 <Option>Date Range</Option>
               </Select>
             </Col>
@@ -307,12 +320,12 @@ useEffect(()=>{
 
       {/* Pagination*/}
       <Row justify="center" style={{ marginTop: "20px" }}>
-        <Button>Previous</Button>
-        <Button type="primary" style={{ margin: "0 5px" }}>
-          1
-        </Button>
-        <Button>2</Button>
-        <Button>Next</Button>
+        <Pagination
+          current={page || 1}
+          pageSize={10}
+          total={total || 0}
+          onChange={(newPage) => fetchOrders("completed", newPage, 10)}
+        />
       </Row>
     </div>
   );

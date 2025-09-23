@@ -9,7 +9,7 @@ const getOrders = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-    const { status } = req.query;
+    const { status ,page = 1,limit = 10} = req.query;
     let filter = {};
 
     if (user.role === "consumer") {
@@ -21,20 +21,31 @@ const getOrders = async (req, res) => {
     }
 
     if (status && status !== "all") {
-      filter.status = status;
+      filter.status = status.charAt(0).toUpperCase()+status.slice(1);
     }
+
+    const skip = (parseInt(page) = 1) * parseInt(limit);
+    const total = await Work.countDocuments(filter);
 
     const orders = await Work.find(filter)
       .populate(
         user.role === "consumer" ? "providerId" : "consumerId",
         "name phone email"
       )
-      .sort({ updated: -1 });
+      .sort({ updated: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
 
     res.status(200).json({
       success: true,
       message: "Past orders fetched successfully",
       data: orders,
+      pagination : {
+        total,
+        page : parseInt(page),
+        limit : parseInt(limit),
+        totalPages : Math.ceil(total/limit),
+      }
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
