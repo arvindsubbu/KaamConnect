@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
 const getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
-    console.log("from server", user);
+   // console.log("from server", user);
     if (!user) {
       return res.status(404).send({
         success: false,

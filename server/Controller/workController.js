@@ -3,7 +3,10 @@ const Work = require("../Models/workModel");
 
 const getOrders = async (req, res) => {
   try {
+    //console.log("req.userId:", req.userId);
+    console.log("req.query:", req.query);
     const user = await User.findById(req.userId).select("-password");
+    //console.log('workcontroller',user);
     if (!user) {
       return res
         .status(404)
@@ -21,18 +24,22 @@ const getOrders = async (req, res) => {
     }
 
     if (status && status !== "all") {
-      filter.status = status.charAt(0).toUpperCase()+status.slice(1);
+      if(typeof status === 'string' && status.includes(',')){
+       filter.status = {$in : status.split(',').map(s => s.trim())};
+      } else {
+        filter.status = status;
+      }
     }
-
-    const skip = (parseInt(page) = 1) * parseInt(limit);
+    const skip = (parseInt(page) - 1) * parseInt(limit);
     const total = await Work.countDocuments(filter);
-
+    console.log(filter);
+    //console.log(total);
     const orders = await Work.find(filter)
       .populate(
         user.role === "consumer" ? "providerId" : "consumerId",
         "name phone email"
       )
-      .sort({ updated: -1 })
+      .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
 
