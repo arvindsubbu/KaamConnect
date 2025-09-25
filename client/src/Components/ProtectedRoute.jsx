@@ -6,15 +6,17 @@ import { HomeOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { setRole, clearRole } from "../redux/roleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import PublicHome from "../pages/PublicHome";
+import { setUser, clearUser } from "../redux/userSlice";
 
 const { Header, Content, Footer } = Layout;
 
 function ProtectedRoute({ children, role: requiredRole }) {
-  const role = useSelector((state) => state.role.value);
-  //  console.log(role);
-  const [user,setUser] = useState('');
+ // const role = 'consumer' //useSelector((state) => state.role.value);
+  //const user = useSelector((state) => state.user.value);
+  const {role,consumer,provider} = useSelector((state)=>state.user);
+    console.log(role,consumer,provider);
+  //const [user,setUser] = useState('');
   const [loading, setLoading] = useState(true);
-  //const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -31,9 +33,10 @@ function ProtectedRoute({ children, role: requiredRole }) {
         const response = await getCurrentUser();
 
         if (response.success) {
-          console.log("API returned role:", response.data);
-          dispatch(setRole(response.data.consumer.role));
-          setUser(response.data.consumer.name);
+          //console.log("API returned role:", response.data);
+         // dispatch(setRole(response.data.consumer.role));
+          dispatch(setUser(response.data))
+         // setUser(response.data.consumer.name);
           // console.log(response.data);
           if (location.pathname === "/") {
             if (response.data.consumer.role === "consumer")
@@ -45,13 +48,15 @@ function ProtectedRoute({ children, role: requiredRole }) {
           }
         } else {
           localStorage.removeItem("token");
-          dispatch(clearRole());
+          //dispatch(clearRole());
+          dispatch(clearUser());
           navigate("/login");
         }
       } catch (err) {
         localStorage.removeItem("token");
-        dispatch(clearRole());
-        setUser(null);
+        //dispatch(clearRole());
+        //setUser(null);
+        dispatch(clearUser());
         navigate("/login");
       } finally {
         setLoading(false);
@@ -87,7 +92,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
       },
     },
     {
-      label: user ? user : "User",
+      label: consumer.name ? consumer.name : 'User',
       key: "profile",
       icon: <UserOutlined />,
       children: [
@@ -110,8 +115,9 @@ function ProtectedRoute({ children, role: requiredRole }) {
               to="/login"
               onClick={() => {
                 localStorage.removeItem("token");
-                setUser(null);
-                dispatch(clearRole());
+               
+                //dispatch(clearRole());
+                dispatch(clearUser());
               }}
             >
               Logout
@@ -160,9 +166,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
         {children}
       </div> */}
       <Content style={{ background: "#f9fafb", padding: "0" }}>
-        <div style={{ paddingBottom: "4rem" }}>{React.isValidElement(children)
-      ? React.cloneElement(children, { username: user })
-      : children}</div>
+        <div style={{ paddingBottom: "4rem" }}>{children}</div>
       </Content>
       <Footer style={{ textAlign: "center" }}>
         {!role ? (

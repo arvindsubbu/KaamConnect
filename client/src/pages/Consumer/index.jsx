@@ -62,7 +62,7 @@ const workers = [
   },
 ];
 
-function Consumer({ username }) {
+function Consumer() {
   const user = useSelector((state) => state.role.user);
   const { locationSearch, setLocationSearch, suggestions } =
     useLocationSearch(); // not using setSuggestions
@@ -80,7 +80,7 @@ function Consumer({ username }) {
         {/* Greeting */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <Title level={3}>
-            Welcome back, <span>{username} 👋</span>
+            Welcome back, <span>username 👋</span>
           </Title>
 
           <Row gutter={[16, 16]} className="mt-3">

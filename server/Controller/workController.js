@@ -20,7 +20,7 @@ const getOrders = async (req, res) => {
     } else if (user.role === "provider") {
       filter.providerId = user._id;
     } else {
-      return res.status(400).json({ succes: false, message: "Invalid role" });
+      return res.status(400).json({ success: false, message: "Invalid role" });
     }
 
     if (status && status !== "all") {

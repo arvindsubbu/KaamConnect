@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const addUser = async (req, res) => {
-    //console.log(req)
+  //console.log(req)
   try {
     const existingUser = await User.findOne({ phone: req.body.phone });
     if (existingUser) {
@@ -15,21 +15,21 @@ const addUser = async (req, res) => {
       });
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const newUser = new User({...req.body,password: hashedPassword});
+    const newUser = new User({ ...req.body, password: hashedPassword });
     //console.log("from addUser", newUser);
     await newUser.save();
 
-    if(req.body.role === 'provider'){
-        const provider = new Provider({
-            userId : newUser._id,
-            serviceCategory : req.body.serviceCategory,
-            yearsOfExperience : Number(req.body.yearsOfExperience),
-            pricing : Number(req.body.pricing) || 0,
-            location : req.body.location
-        })
-        await provider.save();
+    if (req.body.role === "provider") {
+      const provider = new Provider({
+        userId: newUser._id,
+        serviceCategory: req.body.serviceCategory,
+        yearsOfExperience: Number(req.body.yearsOfExperience),
+        pricing: Number(req.body.pricing) || 0,
+        location: req.body.location,
+      });
+      await provider.save();
     }
-    
+
     res.send({
       success: true,
       message: "SignedUp successfully",
@@ -56,11 +56,15 @@ const loginUser = async (req, res) => {
       });
     }
     console.log(user);
-    const token = jwt.sign({ userId: user._id,role : user.role }, process.env.secret_key, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.secret_key,
+      {
+        expiresIn: "1d",
+      }
+    );
     console.log(token);
-    
+
     res.send({
       success: true,
       message: "User logged in successfully",
@@ -74,7 +78,7 @@ const loginUser = async (req, res) => {
 const getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
-   // console.log("from server", user);
+    // console.log("from server", user);
     if (!user) {
       return res.status(404).send({
         success: false,
@@ -83,14 +87,16 @@ const getCurrentUser = async (req, res) => {
     }
     const consumer = user.toObject();
 
-    const provider = await Provider.findOne({userId : user._id});
+    const role = user.role; //added role for redux
+    const provider = await Provider.findOne({ userId: user._id });
 
     res.send({
       success: true,
       message: "You are authorized to go to the protected route",
       data: {
+        role,
         consumer,
-        provider : provider || null ,
+        provider: provider || null,
       },
     });
   } catch (err) {

@@ -110,7 +110,7 @@ function ServiceResults() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 flex items-center cursor-pointer"
                 onClick={() => setIsLocationModalOpen(true)}
               >
-                <EnvironmentOutlined className="mr-2 text-gray-500" />
+                <EnvironmentOutlined className="mr-2 text-gray-500"/>
                 <span
                   className={selectedLocation ? "text-black" : "text-gray-400"}
                 >
