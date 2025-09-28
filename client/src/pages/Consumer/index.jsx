@@ -22,7 +22,7 @@ import BookServiceModal from "../../components/BookServiceModal";
 import useLocationSearch from "../../hooks/useLocationSearch";
 import { slugify } from "../../utils/slugify";
 import { getCurrentLocation } from "../../hooks/getCurrentLocation";
-import ServiceSearchModal from "../../components/serviceSearchModal";
+import ServiceSearchModal from "../../components/ServiceSearchModal";
 import { serviceCategories } from "../../utils/serviceCategories";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserLocation } from "../../redux/userSlice";
