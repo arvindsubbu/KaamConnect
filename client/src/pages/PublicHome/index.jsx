@@ -18,7 +18,7 @@ import {
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import Consumer from "../Consumer";
-import { useSelector } from "react-redux";
+
 
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -70,7 +70,7 @@ const featuredWorkers = [
 ];
 
 function PublicHome(){
-  const role = useSelector((state)=> state.role.role);
+ // const role = useSelector((state)=> state.role.role);
   //console.log(role);
   
   const isLoggedIn = !!localStorage.getItem("token");

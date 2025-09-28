@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     location: {
+      name : String,
       city: String,
       state: String,
       pincode: String,

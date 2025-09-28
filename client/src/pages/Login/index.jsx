@@ -5,7 +5,7 @@ import { loginUser } from "../../api/userApi";
 import {toast} from 'react-hot-toast'
 const { Title, Text } = Typography;
 import { useDispatch } from "react-redux";
-import { setRole } from "../../redux/roleSlice";
+
 
 function Login() {
   const dispatch = useDispatch();
@@ -20,7 +20,6 @@ function Login() {
         console.log(response);
         localStorage.setItem("token", response.data);
         const role = response.role;
-        dispatch(setRole(role));
         if (role === "consumer") navigate("/service");
         else if (role === "provider") navigate("/provider");
         else if (role === "admin") navigate("/admin");

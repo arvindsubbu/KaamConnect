@@ -29,9 +29,10 @@ function Signup() {
   const onFinish = async (values) => {
 
    const selectedLocation = locationOptions.find((opt)=> opt.value === values.location);
-
+    //console.log('selectedlocation',selectedLocation); 
     try {
       const payload = { ...values, role , location : selectedLocation ? {
+            name : selectedLocation.name,
             city: selectedLocation.city,
             state: selectedLocation.state,
             pincode: selectedLocation.pincode,
@@ -76,9 +77,13 @@ function Signup() {
       //console.log('lat',data[0].lat);
       //console.log('lon',data[0].lon);
       setLocationOptions(
-        data.map((place) => ({
+        data.map((place) => {
+          const displayParts = place.display_name.split(',')
+          
+          return {
           value: place.place_id, //stored in form
           label: place.display_name, //user sees in dropdown
+          name : displayParts[0].trim(),
           lat: place.lat,
           lon: place.lon,
           city:
@@ -87,7 +92,8 @@ function Signup() {
             place.address?.village,
           state: place.address?.state,
           pincode: place.address?.postcode,
-        }))
+          }
+        })
       );
     } catch (err) {
       console.error("LocationIQ error:", err);
@@ -96,6 +102,7 @@ function Signup() {
   };
 
   const debouncedFetchLocation = debounce(fetchLocations,300);
+  
   return (
     <main className="text-center" style={{ maxWidth: 450, margin: "0 auto" }}>
       <Title level={2}>KaamConnect</Title>

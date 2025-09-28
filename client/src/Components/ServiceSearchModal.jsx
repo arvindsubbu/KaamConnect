@@ -3,6 +3,9 @@ import { Modal,Input,List,Typography} from 'antd';
 import {SearchOutlined} from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom';
 import { serviceCategories } from '../utils/serviceCategories';
+import { slugify } from '../utils/slugify';
+
+
 
 const {Text} = Typography;
 function ServiceSearchModal({open,onCancel,setSelectedService,selectedService, selectedLocation}) {
@@ -59,7 +62,7 @@ function ServiceSearchModal({open,onCancel,setSelectedService,selectedService, s
                   //setIsModalOpen(false);
                   onCancel();
                   //use slugify to remove unwanted char
-                  const url = buildUrl(cat.label, selectedLocation);
+                  const url = buildUrl(cat.label, slugify(selectedLocation));
                   navigate(url);
                 }}
                 className="cursor-pointer hover:bg-gray-50 rounded px-2"

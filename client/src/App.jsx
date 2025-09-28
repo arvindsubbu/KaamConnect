@@ -8,7 +8,7 @@ import Orders from "./pages/Orders";
 import ServiceResults from "./pages/ServiceResults";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./Components/ProtectedRoute";
 import Consumer from "./pages/Consumer";
 import { Provider } from "react-redux";
 import store from "./redux/store";

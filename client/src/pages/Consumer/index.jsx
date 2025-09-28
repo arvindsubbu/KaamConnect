@@ -24,7 +24,8 @@ import { slugify } from "../../utils/slugify";
 import { getCurrentLocation } from "../../hooks/getCurrentLocation";
 import ServiceSearchModal from "../../Components/serviceSearchModal";
 import { serviceCategories } from "../../utils/serviceCategories";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setUserLocation } from "../../redux/userSlice";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -63,35 +64,38 @@ const workers = [
 ];
 
 function Consumer() {
-  const user = useSelector((state) => state.role.user);
+  const dispatch = useDispatch();
+  const { consumer, location } = useSelector((state) => state.user);
   const { locationSearch, setLocationSearch, suggestions } =
     useLocationSearch(); // not using setSuggestions
+  //console.log(consumer);
+
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("");
   const [isBookServiceModalOpen, setIsBookServiceModalOpen] = useState(false);
   const [selectedWorker, setSelectedWorker] = useState(null);
-
   const navigate = useNavigate();
+
+  const effectiveLocation = location?.name || consumer?.location?.name || null;
   return (
     <Layout className="bg-gray-50">
       <Content className="p-6 md:p-12">
         {/* Greeting */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <Title level={3}>
-            Welcome back, <span>username 👋</span>
+            Welcome back, <span>{consumer.name} 👋</span>
           </Title>
 
           <Row gutter={[16, 16]} className="mt-3">
             <Col xs={24} sm={8}>
-              {selectedLocation ? (
+              {effectiveLocation ? (
                 <div
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 flex items-center cursor-pointer"
                   onClick={() => setIsLocationModalOpen(true)}
                 >
                   <EnvironmentOutlined className="mr-2 text-gray-500" />
-                  <span className="text-gray-800">{selectedLocation}</span>
+                  <span className="text-gray-800">{effectiveLocation}</span>
                 </div>
               ) : (
                 <div
@@ -237,7 +241,7 @@ function Consumer() {
           onCancel={() => setIsSearchModalOpen(false)}
           setSelectedService={setSelectedService}
           selectedService={selectedService}
-          selectedLocation={selectedLocation}
+          selectedLocation={effectiveLocation}
         />
 
         {/* location modal */}
@@ -249,13 +253,20 @@ function Consumer() {
           setLocationSearch={setLocationSearch}
           onUseCurrentLocation={() =>
             getCurrentLocation(
-              setSelectedLocation,
+              dispatch,
               setIsLocationModalOpen,
-              navigate
+              navigate,
             )
           }
           onSelectLocation={(item) => {
-            setSelectedLocation(slugify(item.name));
+            const newLocation = {
+              name: item.name.split(",")[0].trim(),
+              coordinates: {
+                lat: parseFloat(item.lat),
+                lon: parseFloat(item.lon),
+              },
+            };
+            dispatch(setUserLocation(newLocation));
             setIsLocationModalOpen(false);
           }}
         />

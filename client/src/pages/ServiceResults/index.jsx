@@ -22,8 +22,12 @@ import ServiceSearchModal from "../../Components/serviceSearchModal";
 import useLocationSearch from "../../hooks/useLocationSearch";
 import BookServiceModal from "../../Components/BookServiceModal";
 import { slugify } from "../../utils/slugify";
+import { unslugify } from "../../utils/unslugify";
 import { getCurrentLocation } from "../../hooks/getCurrentLocation";
 import { useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setUserLocation } from "../../redux/userSlice";
+import { searchProvider } from "../../api/providerApi";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -63,34 +67,31 @@ const workers = [
 ];
 
 function ServiceResults() {
-  const { location, service } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { location: locationSlug, service } = useParams();
+  const consumer = useSelector((state) => state.user.consumer);
+  const userLocation = useSelector((state) => state.user.location);
+
+   const [displayLocation, setDisplayLocation] = useState("");
+    const [coords, setCoords] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [sort, setSort] = useState("relevance");
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(displayLocation);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState("");
+  const [selectedService, setSelectedService] = useState(service?.toLowerCase() || '');
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [selectedWorker, setSelectedWorker] = useState("");
-
-  useEffect(() => {
-    let actualLocation = location;
-    let actualService = service;
-
-    if (!service) {
-      actualService = location;
-      actualLocation = null;
-    }
-
-    setSelectedService(actualService || "");
-    setSelectedLocation(actualLocation || "");
-  }, [location, service]);
-
-  //setSelectedService(actualService)
-
+  const [providers, setProviders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
   const { locationSearch, setLocationSearch, suggestions } =
     useLocationSearch();
-  const navigate = useNavigate();
+
+  
+
+  console.log(providers);
 
   const toggleFavorite = (id) => {
     setFavorites((prev) =>
@@ -110,12 +111,13 @@ function ServiceResults() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 flex items-center cursor-pointer"
                 onClick={() => setIsLocationModalOpen(true)}
               >
-                <EnvironmentOutlined className="mr-2 text-gray-500"/>
+                <EnvironmentOutlined className="mr-2 text-gray-500" />
                 <span
-                  className={selectedLocation ? "text-black" : "text-gray-400"}
+                  className={displayLocation ? "text-black" : "text-gray-400"}
                 >
-                  {selectedLocation || "Select Location"}
+                  {displayLocation || "Select Location"}
                 </span>
+                
               </div>
             </Col>
 
@@ -133,6 +135,7 @@ function ServiceResults() {
                 </span>
               </div>
             </Col>
+             
           </Row>
         </div>
 
@@ -150,6 +153,7 @@ function ServiceResults() {
             <Option value="rating">Rating: High to Low</Option>
             <Option value="priceLow">Price: Low to High</Option>
             <Option value="priceHigh">Price: High to Low</Option>
+            <Option value="experience">Experience : High to Low</Option>
           </Select>
         </div>
 
@@ -222,14 +226,30 @@ function ServiceResults() {
           setLocationSearch={setLocationSearch}
           onUseCurrentLocation={() =>
             getCurrentLocation(
-              setSelectedLocation,
+              dispatch,
               setIsLocationModalOpen,
-              navigate
+              navigate,
+              service
             )
           }
           onSelectLocation={(item) => {
-            setSelectedLocation(slugify(item.name));
+            const newLocation = {
+              name: item.name.split(",")[0].trim(),
+              coordinates: {
+                lat: parseFloat(item.lat),
+                lon: parseFloat(item.lon),
+              },
+            };
+
+            dispatch(setUserLocation(newLocation)); // <-- save to Redux
+            setSelectedLocation(newLocation.name);
             setIsLocationModalOpen(false);
+
+            if (selectedService) {
+              navigate(
+                `/service/${slugify(newLocation.name)}/${selectedService}`
+              );
+            }
           }}
         />
 

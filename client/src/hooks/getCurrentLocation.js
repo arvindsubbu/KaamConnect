@@ -1,6 +1,7 @@
 import { slugify } from "../utils/slugify";
+import { setUserLocation } from "../redux/userSlice";
 
-export const getCurrentLocation = async (setSelectedLocation, setIsModalOpen, navigate, service) => {
+export const getCurrentLocation = async (dispatch, setIsModalOpen, navigate, service) => {
   if (!navigator.geolocation) {
     alert("Geolocation is not supported by your browser");
     return;
@@ -17,18 +18,23 @@ export const getCurrentLocation = async (setSelectedLocation, setIsModalOpen, na
 
         // Pick city or fallback to display_name
         const locName = data.address?.city || data.address?.state || data.display_name;
-
+       const newLocation = {
+        name: locName,
+        coordinates: {
+          lat: latitude,
+          lon: longitude,
+        },
+      };
+      dispatch(setUserLocation(newLocation));
         const cleanLoc = slugify(locName);
 
-        setSelectedLocation(cleanLoc);
+       // setSelectedLocation(cleanLoc);
         setIsModalOpen(false);
 
         // If a service is already selected, navigate to combined route
         if (service) {
           navigate(`/service/${cleanLoc}/${service}`);
-        } else {
-          navigate(`/service/${cleanLoc}`);
-        }
+        } 
       } catch (err) {
         console.error("Error fetching location:", err);
       }

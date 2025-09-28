@@ -6,6 +6,10 @@ const userSlice = createSlice({
     role: null, // consumer | provider | admin
     consumer: null, // consumer profile data
     provider: null, // provider profile data
+    location: {
+      name: "",
+      coordinates: null, //  lat, lon
+    },
   },
   reducers: {
     setUser: (state, action) => {
@@ -18,6 +22,7 @@ const userSlice = createSlice({
       state.role = null;
       state.consumer = null;
       state.provider = null;
+      state.location = { name: "", coordinates: null };
     },
     updateConsumerLocation: (state, action) => {
       if (state.consumer) {
@@ -29,6 +34,9 @@ const userSlice = createSlice({
         state.provider = { ...state.provider, ...action.payload };
       }
     },
+    setUserLocation: (state, action) => {
+      state.location = action.payload;
+    },
   },
 });
 
@@ -37,6 +45,7 @@ export const {
   clearUser,
   updateConsumerLocation,
   updateProviderData,
+  setUserLocation,
 } = userSlice.actions;
 
 export default userSlice.reducer;

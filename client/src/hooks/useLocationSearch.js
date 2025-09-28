@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 
+
 export default function useLocationSearch() {
+
   const [locationSearch, setLocationSearch] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 

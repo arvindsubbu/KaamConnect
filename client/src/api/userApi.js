@@ -5,7 +5,7 @@ const signUpUser = async (values)=>{
         const res = await axiosInstance.post('/api/user/signup',values);
         return res.data;
     }catch(err){
-        console.log(err);
+        console.log('Error signing up',err);
     }
 }
 
@@ -16,7 +16,7 @@ const loginUser = async (values)=>{
         
         return response.data;
     }catch(err){
-        console.log(err);
+        console.error('Error logging in',err);
     }
 }
 
@@ -25,7 +25,7 @@ const getCurrentUser = async ()=>{
         const response = await axiosInstance.get('/api/user/get-current-user');
         return response.data;
     }catch(err){
-        console.log(err);
+        console.error('Error getting current user data',err);
     }
 }
 

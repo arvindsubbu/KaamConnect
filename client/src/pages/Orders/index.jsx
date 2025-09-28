@@ -161,8 +161,8 @@ const OrderCard = ({ role, order }) => (
 
 
 function Orders() {
-  const user = useSelector((state) => state.role.value);
-  const role = user?.role;
+  const role = useSelector((state) => state.user);
+ // const role = user?.role;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(null);

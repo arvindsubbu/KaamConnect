@@ -3,7 +3,6 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../api/userApi";
 import { Spin, Layout, Menu } from "antd";
 import { HomeOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { setRole, clearRole } from "../redux/roleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import PublicHome from "../pages/PublicHome";
 import { setUser, clearUser } from "../redux/userSlice";
@@ -14,7 +13,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
  // const role = 'consumer' //useSelector((state) => state.role.value);
   //const user = useSelector((state) => state.user.value);
   const {role,consumer,provider} = useSelector((state)=>state.user);
-    console.log(role,consumer,provider);
+   // console.log(role,consumer,provider);
   //const [user,setUser] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

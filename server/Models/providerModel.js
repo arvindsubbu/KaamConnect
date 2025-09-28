@@ -10,6 +10,7 @@ const providerSchema = new mongoose.Schema(
     serviceCategory: {
       type: String,
       required: true,
+      set : v => v.toLowerCase()
     },
     pricing: {
       type: Number,
