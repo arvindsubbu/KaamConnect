@@ -38,11 +38,11 @@ function ProtectedRoute({ children, role: requiredRole }) {
          // setUser(response.data.consumer.name);
           // console.log(response.data);
           if (location.pathname === "/") {
-            if (response.data.consumer.role === "consumer")
+            if (response.data.consumer?.role === "consumer")
               navigate("/service", { replace: true });
-            else if (response.data.consumer.role === "provider")
+            else if (response.data?.consumer.role === "provider")
               navigate("/provider", { replace: true });
-            else if (response.data.consumer.role === "admin")
+            else if (response.data.consumer?.role === "admin")
               navigate("/admin", { replace: true });
           }
         } else {
@@ -91,7 +91,7 @@ function ProtectedRoute({ children, role: requiredRole }) {
       },
     },
     {
-      label: consumer.name ? consumer.name : 'User',
+      label: consumer?.name || 'User',
       key: "profile",
       icon: <UserOutlined />,
       children: [

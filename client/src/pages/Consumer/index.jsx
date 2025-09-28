@@ -84,7 +84,7 @@ function Consumer() {
         {/* Greeting */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <Title level={3}>
-            Welcome back, <span>{consumer.name} 👋</span>
+            Welcome back, <span>{consumer?.name || 'Guest'} 👋</span>
           </Title>
 
           <Row gutter={[16, 16]} className="mt-3">
