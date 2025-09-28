@@ -5,7 +5,7 @@ const auth = (req,res,next)=>{
         //console.log('req headers',req.headers);
         const token = req.headers.authorization.split(' ')[1];
         //console.log('token',token);
-        const verifiedToken = jwt.verify(token,process.env.secret_key);
+        const verifiedToken = jwt.verify(token,process.env.JWT_SECRET);
         console.log('verfication key',verifiedToken);
         req.userId =verifiedToken.userId;
         req.userRole = verifiedToken.role;
