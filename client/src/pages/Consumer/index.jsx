@@ -17,12 +17,12 @@ import {
   EnvironmentOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import LocationModal from "../../Components/LocationModal";
-import BookServiceModal from "../../Components/BookServiceModal";
+import LocationModal from "../../components/LocationModal";
+import BookServiceModal from "../../components/BookServiceModal";
 import useLocationSearch from "../../hooks/useLocationSearch";
 import { slugify } from "../../utils/slugify";
 import { getCurrentLocation } from "../../hooks/getCurrentLocation";
-import ServiceSearchModal from "../../Components/serviceSearchModal";
+import ServiceSearchModal from "../../components/serviceSearchModal";
 import { serviceCategories } from "../../utils/serviceCategories";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserLocation } from "../../redux/userSlice";

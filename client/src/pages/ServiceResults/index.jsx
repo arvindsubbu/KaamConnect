@@ -17,10 +17,10 @@ import {
   EnvironmentOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import LocationModal from "../../Components/LocationModal";
-import ServiceSearchModal from "../../Components/serviceSearchModal";
+import LocationModal from "../../components/LocationModal";
+import ServiceSearchModal from "../../components/serviceSearchModal";
 import useLocationSearch from "../../hooks/useLocationSearch";
-import BookServiceModal from "../../Components/BookServiceModal";
+import BookServiceModal from "../../components/BookServiceModal";
 import { slugify } from "../../utils/slugify";
 import { unslugify } from "../../utils/unslugify";
 import { getCurrentLocation } from "../../hooks/getCurrentLocation";
