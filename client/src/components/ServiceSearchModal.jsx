@@ -78,4 +78,4 @@ function ServiceSearchModal({open,onCancel,setSelectedService,selectedService, s
   )
 }
 
-export default ServiceSearchModal
+export default ServiceSearchModal;

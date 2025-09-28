@@ -18,7 +18,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import LocationModal from "../../components/LocationModal";
-import ServiceSearchModal from "../../components/serviceSearchModal";
+import ServiceSearchModal from '../../components/ServiceSearchModal'
 import useLocationSearch from "../../hooks/useLocationSearch";
 import BookServiceModal from "../../components/BookServiceModal";
 import { slugify } from "../../utils/slugify";
