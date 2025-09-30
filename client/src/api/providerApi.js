@@ -1,14 +1,14 @@
 import { axiosInstance } from ".";
 
-//add page and limit to params
-const searchProvider = async (serviceCategory, lat, lon, maxDistance, sort) => {
+//add page and limit to params for pagination
+const searchProvider = async (serviceCategory, lon, lat, maxDistance, sort) => {
   try {
     const res = await axiosInstance.get("/api/providers/search", {
       params: {
         service: serviceCategory,
-        lat: Number(lat),
-        lon: Number(lon),
-        maxDistance: Number(maxDistance),
+        lat: parseFloat(lat),
+        lon: parseFloat(lon),
+        maxDistance: parseInt(maxDistance),
         sort,
       },
     });

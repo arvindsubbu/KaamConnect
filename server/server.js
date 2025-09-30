@@ -11,7 +11,7 @@ connectDb();
 app.use(express.json());
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://kaamconnect.vercel.app"],
+  origin: ["http://localhost:5173", "https://kaam-connect.vercel.app"],
   credentials: true
 }));
 

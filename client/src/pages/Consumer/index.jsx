@@ -84,7 +84,7 @@ function Consumer() {
         {/* Greeting */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <Title level={3}>
-            Welcome back, <span>{consumer?.name || 'Guest'} 👋</span>
+            Welcome back, <span>{consumer?.name || "Guest"} 👋</span>
           </Title>
 
           <Row gutter={[16, 16]} className="mt-3">
@@ -252,18 +252,14 @@ function Consumer() {
           locationSearch={locationSearch}
           setLocationSearch={setLocationSearch}
           onUseCurrentLocation={() =>
-            getCurrentLocation(
-              dispatch,
-              setIsLocationModalOpen,
-              navigate,
-            )
+            getCurrentLocation(dispatch, setIsLocationModalOpen, navigate)
           }
           onSelectLocation={(item) => {
             const newLocation = {
               name: item.name.split(",")[0].trim(),
               coordinates: {
-                lat: parseFloat(item.lat),
                 lon: parseFloat(item.lon),
+                lat: parseFloat(item.lat),
               },
             };
             dispatch(setUserLocation(newLocation));

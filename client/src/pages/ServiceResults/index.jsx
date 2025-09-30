@@ -18,7 +18,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import LocationModal from "../../components/LocationModal";
-import ServiceSearchModal from '../../components/ServiceSearchModal'
+import ServiceSearchModal from "../../components/ServiceSearchModal";
 import useLocationSearch from "../../hooks/useLocationSearch";
 import BookServiceModal from "../../components/BookServiceModal";
 import { slugify } from "../../utils/slugify";
@@ -71,27 +71,69 @@ function ServiceResults() {
   const navigate = useNavigate();
   const { location: locationSlug, service } = useParams();
   const consumer = useSelector((state) => state.user.consumer);
-  const userLocation = useSelector((state) => state.user.location);
+  const location = useSelector((state) => state.user.location);
+  // console.log('from consumer',consumer.location.coordinates.coordinates[0]);
+  // console.log('from redux',slugify(location.name));
+  // console.log('from url',slugify(locationSlug));
+   console.log( service);
 
-   const [displayLocation, setDisplayLocation] = useState("");
-    const [coords, setCoords] = useState(null);
+  const [displayLocation, setDisplayLocation] = useState('');
   const [favorites, setFavorites] = useState([]);
   const [sort, setSort] = useState("relevance");
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(displayLocation);
+  const [selectedLocation, setSelectedLocation] = useState('');
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState(service?.toLowerCase() || '');
+  const [selectedService, setSelectedService] = useState(
+    service?.toLowerCase() || ""
+  );
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [selectedWorker, setSelectedWorker] = useState("");
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(false);
-  
+
   const { locationSearch, setLocationSearch, suggestions } =
     useLocationSearch();
+  // console.log(coords[0]);
+  useEffect(() => {
+    let lon, lat;
+    if (location.name === '' && locationSlug === slugify(consumer.location.name)) {
+      console.log("this is rendered");
 
-  
+      setDisplayLocation(consumer.location.name);
+      setSelectedLocation(consumer.location.name);
+      lon = consumer.location.coordinates.coordinates[0];
+      lat = consumer.location.coordinates.coordinates[1];
+    } else if (location.coordinates) {
+      setDisplayLocation(location.name);
+      setSelectedLocation(location.name);
+      lon = location.coordinates.lon;
+      lat = location.coordinates.lat;
+    }
+    
+    console.log("coords", lon, lat);
+    console.log(service);
+    
+    const fetchProivders = async (service, lon, lat, maxDistance, sort) => {
+      try{
+        const res = await searchProvider(
+        service,
+        parseFloat(lon),
+        parseFloat(lat),
+        maxDistance,
+        sort
+      );
+      console.log('provider array',res.providers);
+      setProviders(res.providers || []);
+      }catch(err){
+        console.error('Failed to fetch providers',err);
+      }
+      
+    };
 
-  console.log(providers);
+    fetchProivders(selectedService, lon, lat, 5000, sort);
+  }, [locationSlug, selectedService, sort]);
+
+  //console.log("proveder array", providers);
 
   const toggleFavorite = (id) => {
     setFavorites((prev) =>
@@ -117,7 +159,6 @@ function ServiceResults() {
                 >
                   {displayLocation || "Select Location"}
                 </span>
-                
               </div>
             </Col>
 
@@ -135,7 +176,6 @@ function ServiceResults() {
                 </span>
               </div>
             </Col>
-             
           </Row>
         </div>
 
@@ -160,61 +200,64 @@ function ServiceResults() {
         {/* Workers List */}
         <Row gutter={[16, 16]}>
           {/* applied temp filter for the dummy data */}
-          {workers
-            .filter((w) => w.service.toLowerCase() === selectedService)
-            .map((w) => (
-              <Col xs={24} md={12} key={w.id}>
-                <Card className="rounded-xl shadow-sm relative">
-                  {/* Favorite Star */}
-                  <div
-                    className="absolute top-3 right-3 cursor-pointer"
-                    onClick={() => toggleFavorite(w.id)}
-                  >
-                    {favorites.includes(w.id) ? (
-                      <StarFilled
-                        style={{ color: "#fadb14", fontSize: "20px" }}
-                      />
-                    ) : (
-                      <StarOutlined
-                        style={{ color: "#999", fontSize: "20px" }}
-                      />
-                    )}
-                  </div>
+          {providers.length > 0 ? ( providers.map((w) => (
+            <Col xs={24} md={12} key={w.id}>
+              <Card className="rounded-xl shadow-sm relative">
+                {/* Favorite Star */}
+                <div
+                  className="absolute top-3 right-3 cursor-pointer"
+                  onClick={() => toggleFavorite(w.id)}
+                >
+                  {favorites.includes(w.id) ? (
+                    <StarFilled
+                      style={{ color: "#fadb14", fontSize: "20px" }}
+                    />
+                  ) : (
+                    <StarOutlined style={{ color: "#999", fontSize: "20px" }} />
+                  )}
+                </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        src={w.photo}
-                        size={64}
-                        shape="circle"
-                        className="border border-gray-200"
-                      />
-                      <div>
-                        <Text strong>{w.name}</Text>
-                        <br />
-                        <Text type="secondary">{w.service}</Text>
-                        <div className="text-yellow-500">
-                          ⭐ {w.rating} ({w.jobs} jobs)
-                        </div>
-                        <Text strong>{w.price}</Text>
-                        <div className="text-gray-500 text-sm flex items-center">
-                          <EnvironmentOutlined className="mr-1" /> {w.location}
-                        </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar
+                      src={w.photo}
+                      size={64}
+                      shape="circle"
+                      className="border border-gray-200"
+                    />
+                    <div>
+                      <Text strong>{w.userId.name}</Text>
+                      <br />
+                      <Text type="secondary">{w.serviceCategory}</Text>
+                      <div className="text-yellow-500">
+                        ⭐ {w.rating} ({w.jobs} jobs)
+                      </div>
+                      <Text strong>{w.price}</Text>
+                      <div className="text-gray-500 text-sm flex items-center">
+                        <EnvironmentOutlined className="mr-1" />{" "}
+                        {w.location.city}
                       </div>
                     </div>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        setIsBookModalOpen(true);
-                        setSelectedWorker(w);
-                      }}
-                    >
-                      Book
-                    </Button>
                   </div>
-                </Card>
-              </Col>
-            ))}
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setIsBookModalOpen(true);
+                      setSelectedWorker(w);
+                    }}
+                  >
+                    Book
+                  </Button>
+                </div>
+              </Card>
+            </Col>
+          ))) : (
+            <Col span={24}>
+      <div className="text-center text-3xl py-20">
+        No providers available
+      </div>
+    </Col>
+          )}
         </Row>
 
         {/* Location Modal */}
